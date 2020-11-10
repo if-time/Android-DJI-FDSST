@@ -71,7 +71,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
 
         // Register the broadcast receiver for receiving the device connection's changes.
         IntentFilter filter = new IntentFilter();
-        filter.addAction(FPVDemoApplication.FLAG_CONNECTION_CHANGE);
+        filter.addAction(DJIApplication.FLAG_CONNECTION_CHANGE);
         registerReceiver(mReceiver, filter);    //注册接收器，filter负责过滤出来符合FLAG_CONNECTION_CHANGE的广播
     }
 
@@ -245,7 +245,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
     };
 
     private void refreshSDKRelativeUI() {
-        BaseProduct mProduct = FPVDemoApplication.getProductInstance();
+        BaseProduct mProduct = DJIApplication.getProductInstance();
 
         if (null != mProduct && mProduct.isConnected()) {
 
