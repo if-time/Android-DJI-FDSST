@@ -9,18 +9,22 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.Typeface;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+
+import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -28,19 +32,27 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
+import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
 import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
 import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
 import com.dji.FPVDemo.tracking.KCFResultFormJNI;
+import com.dji.FPVDemo.utils.BorderedText;
 import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
+import com.dji.FPVDemo.view.MultiBoxTracker;
+import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.TouchPaintView;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import dji.common.camera.SettingsDefinitions;
 import dji.common.error.DJIError;
@@ -50,6 +62,8 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * @author dongsiyuan
@@ -61,10 +75,14 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
 
-    private static final String TF_OD_API_MODEL_FILE = "file:///android_asset/frozen_inference_graph_v6.pb";
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco_labels_list.txt";
+    private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
+    private static final boolean TF_OD_API_IS_QUANTIZED = true;
+    //    private static final String TF_OD_API_MODEL_FILE = "file:///android_asset/frozen_inference_graph_v6.pb";
+//    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco_labels_list.txt";
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
     private static final int TF_OD_API_INPUT_SIZE = 300;
+    private static final float TEXT_SIZE_DIP = 10;
 
     private int widthDisplay;
     private int heightDisplay;
@@ -74,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private boolean runDetection = false;
 
-    private enum TrackerType { USE_KCF, USE_FDSST}
-    private static TrackerType trackerType = TrackerType.USE_KCF;
+    private enum TrackerType { USE_KCF, USE_FDSST, USE_TENSORFLOW}
+    private static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
     // Codec for video live view
@@ -89,28 +107,43 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private ClassifierFromTensorFlow classifierFromTensorFlow;
 
-//    private AutoFitTextureView mVideoSurface = null;
+    // 画框
+    private MultiBoxTracker tracker;
+    private BorderedText borderedText;
+
+    //    private AutoFitTextureView mVideoSurface = null;
     private TextureView mVideoSurface = null;
     private Button btnThermal;
     private Button btnThread;
+
+    private TextView tvFPS;
 
     private ImageView imageViewForFrame;
 
     private TouchPaintView touchView;
 
+    private OverlayView trackingOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        initUI();
+        final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
+        borderedText = new BorderedText(textSizePx);
+        borderedText.setTypeface(Typeface.MONOSPACE);
+        tracker = new MultiBoxTracker(this);
+
         getDisplaySize();
+        initUI();
         initListener();
 
-
-
-
+        try {
+            // create either a new ImageClassifierQuantizedMobileNet or an ImageClassifierFloatInception
+            classifierFromTensorFlow = TFLiteObjectDetectionAPIModel.create(getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to initialize an image classifier.");
+        }
     }
 
     private void initUI() {
@@ -128,6 +161,17 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         btnThread.setOnClickListener(this);
 
         touchView = (TouchPaintView) findViewById(R.id.touch_view);
+
+        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
+
+        tvFPS = findViewById(R.id.tvFPS);
+
+        RxView.clicks(btnThermal).throttleFirst(2, TimeUnit.SECONDS).subscribe(new Consumer<Object>() {
+            @Override
+            public void accept(Object o) throws Exception {
+
+            }
+        });
     }
 
     private void initListener() {
@@ -155,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 //                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
 
                 String titleList = "选择哪种跟踪算法？";
-                final String[] languanges = new String[]{"KCF", "FDSST"};
+                final String [] languanges = new String[]{"KCF", "FDSST"};
                 DialogFragmentHelper.showListDialog(MainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
                     @Override
                     public void onDataResult(Integer result) {
@@ -177,6 +221,14 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
             }
         });
+
+        trackingOverlay.addCallback(new OverlayView.DrawCallback() {
+            @Override
+            public void drawCallback(final Canvas canvas) {
+                tracker.draw(canvas);
+            }
+        });
+        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
     }
 
     /**
@@ -241,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     }
 
     private void setThermalConfig() {
-        BaseProduct baseProduct = FPVDemoApplication.getProductInstance();
+        BaseProduct baseProduct = DJIApplication.getProductInstance();
         mCamera = baseProduct.getCameras().get(0);
         mCamera.setDisplayMode(SettingsDefinitions.DisplayMode.MSX, new CommonCallbacks.CompletionCallback() {
             @Override
@@ -276,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         if (mVideoSurface == null) {
             Log.e(TAG, "mVideoSurface is null");
         }
-        Log.e(TAG, "onResume: onResume is finished");
     }
 
     @Override
@@ -307,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private void initPreviewer() {
 
-        BaseProduct product = FPVDemoApplication.getProductInstance();
+        BaseProduct product = DJIApplication.getProductInstance();
 
         if (product == null || !product.isConnected()) {
             //            showToast(getString(R.string.disconnected));
@@ -425,6 +476,9 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                 trackingForFDSST();
 //                showToast("trackingForFDSST");
                 break;
+            case USE_TENSORFLOW:
+                detectionForTensorFlow();
+                break;
             default:
                 break;
         }
@@ -455,6 +509,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             FDSSTResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
             bitmap.recycle();
             showToast("ms: " + (System.currentTimeMillis() - start));
+            setFPS(1000 / (System.currentTimeMillis() - start));
             Paint paint = new Paint();
             paint.setColor(Color.RED);
             paint.setStyle(Paint.Style.STROKE);
@@ -523,6 +578,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
      * detectionForTensorFlow
      */
     private void detectionForTensorFlow() {
+        trackingOverlay.postInvalidate();
         if (classifierFromTensorFlow == null) {
             showToast("Uninitialized Classifier or invalid context.");
             return;
@@ -550,49 +606,62 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
             final Canvas canvas = new Canvas(croppedBitmap);
 
+            final List<ClassifierFromTensorFlow.Recognition> mappedRecognitions = new LinkedList<ClassifierFromTensorFlow.Recognition>();
+
             for (final ClassifierFromTensorFlow.Recognition result : results) {
                 final RectF location = result.getLocation();
-                Log.i(TAG, "classifyFrame: " + location.bottom);
+
                 if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-                    Paint paint = new Paint();
-                    Paint paint1 = new Paint();
-                    if (result.getTitle().equals("openeyes")) {
-                        paint.setColor(Color.GREEN);
-                        paint1.setColor(Color.GREEN);
-                    } else if (result.getTitle().equals("closeeyes")) {
-                        paint.setColor(Color.RED);
-                        paint1.setColor(Color.RED);
 
-                    } else if (result.getTitle().equals("phone")) {
-                        paint.setColor(0xFFFF9900);
-                        paint1.setColor(0xFFFF9900);
+                    RectF locationDisplay = new RectF(canvasWidth * location.left / TF_OD_API_INPUT_SIZE,
+                            canvasHeight * location.top / TF_OD_API_INPUT_SIZE,
+                            canvasWidth * location.right / TF_OD_API_INPUT_SIZE,
+                            canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE);
+                    result.setLocation(locationDisplay);
+                    mappedRecognitions.add(result);
+//                    Paint paint = new Paint();
+//                    Paint paint1 = new Paint();
+//                    if (result.getTitle().equals("openeyes")) {
+//                        paint.setColor(Color.GREEN);
+//                        paint1.setColor(Color.GREEN);
+//                    } else if (result.getTitle().equals("closeeyes")) {
+//                        paint.setColor(Color.RED);
+//                        paint1.setColor(Color.RED);
+//
+//                    } else if (result.getTitle().equals("phone")) {
+//                        paint.setColor(0xFFFF9900);
+//                        paint1.setColor(0xFFFF9900);
+//
+//                    } else if (result.getTitle().equals("smoke")) {
+//                        paint.setColor(Color.YELLOW);
+//                        paint1.setColor(Color.YELLOW);
+//                    } else {
+//                        paint.setColor(Color.WHITE);
+//                    }
+//
+//                    paint.setStyle(Paint.Style.STROKE);
+//                    paint.setStrokeWidth(5.0f);
+//                    paint.setAntiAlias(true);
+//                    paint1.setStyle(Paint.Style.FILL);
+//                    paint1.setAlpha(125);
+//                    //                canvas.drawRect(location, paint);
+//                    //                   canvas.drawText();
+//                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint);
+//                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint1);
+//                    canvas.drawRect((float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), (float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), paint);
 
-                    } else if (result.getTitle().equals("smoke")) {
-                        paint.setColor(Color.YELLOW);
-                        paint1.setColor(Color.YELLOW);
-                    } else {
-                        paint.setColor(Color.WHITE);
-                    }
 
-                    paint.setStyle(Paint.Style.STROKE);
-                    paint.setStrokeWidth(5.0f);
-                    paint.setAntiAlias(true);
-                    paint1.setStyle(Paint.Style.FILL);
-                    paint1.setAlpha(125);
-                    //                canvas.drawRect(location, paint);
-                    //                   canvas.drawText();
-                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint);
-                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint1);
-                    canvas.drawRect((float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), (float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), paint);
                 }
 
             }
-            imageViewForFrame.post(new Runnable() {
-                @Override
-                public void run() {
-                    imageViewForFrame.setImageBitmap(croppedBitmap);
-                }
-            });
+            tracker.trackResultsFromTensorFlow(mappedRecognitions);
+            trackingOverlay.postInvalidate();
+//            imageViewForFrame.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    imageViewForFrame.setImageBitmap(croppedBitmap);
+//                }
+//            });
         }
     }
 
@@ -648,6 +717,15 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Date curDate = new Date(System.currentTimeMillis());
         return sdf.format(curDate);
+    }
+
+    private void setFPS(final long fps) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvFPS.setText("FPS: " + fps);
+            }
+        });
     }
 
 }
