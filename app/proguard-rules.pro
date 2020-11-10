@@ -113,3 +113,6 @@
 -keep class android.arch.** { *; }
 -dontwarn android.arch.**
 -ignorewarnings
+
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

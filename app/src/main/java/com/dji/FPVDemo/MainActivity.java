@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private boolean runDetection = false;
 
-    private enum TrackerType { USE_KCF, USE_FDSST, USE_TENSORFLOW}
+    private enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW}
+
     private static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 //                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
 
                 String titleList = "选择哪种跟踪算法？";
-                final String [] languanges = new String[]{"KCF", "FDSST"};
+                final String[] languanges = new String[]{"KCF", "FDSST"};
                 DialogFragmentHelper.showListDialog(MainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
                     @Override
                     public void onDataResult(Integer result) {
@@ -233,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     /**
      * FDSST初始化
+     *
      * @param rectFForFrame
      * @param bitmapForTracking
      */
@@ -253,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     /**
      * KCF初始化
+     *
      * @param rectFForFrame
      * @param bitmapForTracking
      */
@@ -684,6 +687,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     /**
      * 获取跟踪算法返回的结果
+     *
      * @param l_x
      * @param l_y
      * @param r_x

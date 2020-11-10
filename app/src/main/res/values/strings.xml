@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Detection And Tracking</string>
-    <string name="action_settings">Settings</string>   
+    <string name="action_settings">Settings</string>
     <string name="disconnected">Disconnected</string>
     <string name="product_information">Product Information</string>
     <string name="connection_loose">Status: No Product Connected</string>

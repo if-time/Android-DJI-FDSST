@@ -1,12 +1,10 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.legacy:legacy-support-v4:1.0.0-rc01@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d117a0bd3eeb7a16350d442eda46c615/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d117a0bd3eeb7a16350d442eda46c615/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d117a0bd3eeb7a16350d442eda46c615/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cd3be238200df61af732ec4f92b5bb3a/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bf44dca64f9aae546c941edfb9ec9227/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cd3be238200df61af732ec4f92b5bb3a/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cd3be238200df61af732ec4f92b5bb3a/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bf44dca64f9aae546c941edfb9ec9227/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bf44dca64f9aae546c941edfb9ec9227/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

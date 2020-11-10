@@ -3,3 +3,7 @@
 0	3006	626675531	CMakeFiles/native-lib.dir/native-lib.cpp.o	25a1b87e76ea347b
 7	3202	626675531	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	4299e582bebf5625
 3202	3448	626675532	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	1ad69f709ccca43c
+293	3694	626696362	CMakeFiles/native-lib.dir/fdsst/fhog.cpp.o	4419aa2ef638de2
+291	3709	626696362	CMakeFiles/native-lib.dir/native-lib.cpp.o	25a1b87e76ea347b
+289	3881	626696362	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	4299e582bebf5625
+3881	4155	626696362	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	1ad69f709ccca43c

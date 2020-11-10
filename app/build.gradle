@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'     //表明这个是一个application应用程序，如果事com.android.library,则是库模块，作为代码库在别的模块中引用
 
+// 注：需要配置符号表时，使用bugly插件
+apply plugin: 'bugly'
+//bugly {
+//    appId = '9c1c6b3952' // 注册时分配的App ID
+//    appKey = '4e4b4482-100b-41b9-8858-74222ce4b691' // 注册时分配的App Key
+//    debug = true
+//}
+
 repositories {
     mavenLocal()
 }
@@ -97,6 +105,7 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
+    implementation files('libs\\crasheye-2.2.5.jar')
     compileOnly 'com.dji:dji-sdk-provided:4.13.1'
     implementation project(path: ':opcv430android')
 
@@ -114,6 +123,10 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
 
     // RxView
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    // bugly
+    implementation 'com.tencent.bugly:crashreport:3.2.3' //Bugly SDK
+    implementation 'com.tencent.bugly:nativecrashreport:3.7.5' //Bugly NDK
 }
 
 // Please uncomment the following code if you use your own sdk version.
