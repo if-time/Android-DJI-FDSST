@@ -1,0 +1,18 @@
+{
+  "buildFiles": [
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\CMakeLists.txt",
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\platforms.cmake"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86 --target clean"
+  ],
+  "libraries": {
+    "opencv_jni_shared-Release-x86": {
+      "artifactName": "opencv_jni_shared",
+      "buildCommand": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86 --target opencv_jni_shared",
+      "abi": "x86",
+      "output": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86\\libopencv_jni_shared.a"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "stringTable": {
+    "0": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/debug/x86_64",
+    "1": "--target=x86_64-none-linux-android21 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -O0 -fno-limit-debug-info -fPIC"
+  },
+  "buildFiles": [
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\CMakeLists.txt",
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\platforms.cmake"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\debug\\x86_64 --target clean"
+  ],
+  "libraries": {
+    "opencv_jni_shared-Debug-x86_64": {
+      "buildCommand": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\debug\\x86_64 --target opencv_jni_shared",
+      "buildType": "debug",
+      "toolchain": "3239077757",
+      "abi": "x86_64",
+      "artifactName": "opencv_jni_shared",
+      "files": [
+        {
+          "src": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\dummy.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\debug\\x86_64\\libopencv_jni_shared.a"
+    }
+  },
+  "toolchains": {
+    "3239077757": {
+      "cppCompilerExecutable": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

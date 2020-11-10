@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dji:dji-uxsdk:4.13@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b38934ced22e323133a3b673ac4f16ca/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b38934ced22e323133a3b673ac4f16ca/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b38934ced22e323133a3b673ac4f16ca/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2b28ea38286d32de0c2f6432c4ed93aa/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2b28ea38286d32de0c2f6432c4ed93aa/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/2b28ea38286d32de0c2f6432c4ed93aa/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

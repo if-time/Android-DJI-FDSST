@@ -1,0 +1,3 @@
+C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/opencv_jni_shared.dir
+C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir

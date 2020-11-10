@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapbox.mapboxsdk:mapbox-android-telemetry:2.2.10@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/68da900c79be7f45fdb996459d723e15/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/68da900c79be7f45fdb996459d723e15/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/68da900c79be7f45fdb996459d723e15/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/539ec3cd9b1896176358182c9ca0dbab/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/539ec3cd9b1896176358182c9ca0dbab/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/539ec3cd9b1896176358182c9ca0dbab/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.mapboxsdk/mapbox-android-telemetry/2.2.10/92ce4964bf04c5984cc9e4919fc738762f8d9474/mapbox-android-telemetry-2.2.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

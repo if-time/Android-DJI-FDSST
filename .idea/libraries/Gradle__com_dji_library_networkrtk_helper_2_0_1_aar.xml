@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dji:library-networkrtk-helper:2.0.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b3161f5eba6c17fabd7ca63f26001420/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b3161f5eba6c17fabd7ca63f26001420/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b3161f5eba6c17fabd7ca63f26001420/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b3161f5eba6c17fabd7ca63f26001420/jars/libs/wz-rtcm-2.0.1-release.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ce97d29a9405c299492e3a6b222983ee/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ce97d29a9405c299492e3a6b222983ee/jars/libs/wz-rtcm-2.0.1-release.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ce97d29a9405c299492e3a6b222983ee/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/ce97d29a9405c299492e3a6b222983ee/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

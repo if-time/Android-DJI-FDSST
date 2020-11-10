@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapbox.mapboxsdk:mapbox-android-sdk:5.5.1@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5310f13addd55803d81f28f5b7f188ac/annotations.zip!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ecfd9b16f2e0f32a23ad4a1a4a3b3e3/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5310f13addd55803d81f28f5b7f188ac/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5310f13addd55803d81f28f5b7f188ac/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5310f13addd55803d81f28f5b7f188ac/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ecfd9b16f2e0f32a23ad4a1a4a3b3e3/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ecfd9b16f2e0f32a23ad4a1a4a3b3e3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/1ecfd9b16f2e0f32a23ad4a1a4a3b3e3/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.mapboxsdk/mapbox-android-sdk/5.5.1/13d07057bbd45ab936b862a60804ae25bfae45ca/mapbox-android-sdk-5.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

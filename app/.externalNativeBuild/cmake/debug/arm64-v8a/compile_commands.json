@@ -1,0 +1,19 @@
+[
+{
+  "directory": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/.externalNativeBuild/cmake/debug/arm64-v8a",
+  "command": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android21 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\native-lib.dir\\native-lib.cpp.o -c C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\native-lib.cpp",
+  "file": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\native-lib.cpp"
+},
+
+{
+  "directory": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/.externalNativeBuild/cmake/debug/arm64-v8a",
+  "command": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android21 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\native-lib.dir\\fdsst\\fdssttracker.cpp.o -c C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\fdsst\\fdssttracker.cpp",
+  "file": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\fdsst\\fdssttracker.cpp"
+},
+
+{
+  "directory": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/.externalNativeBuild/cmake/debug/arm64-v8a",
+  "command": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android21 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\native-lib.dir\\fdsst\\fhog.cpp.o -c C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\fdsst\\fhog.cpp",
+  "file": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\fdsst\\fhog.cpp"
+}
+]

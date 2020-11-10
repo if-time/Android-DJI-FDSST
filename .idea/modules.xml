@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Android-DJI-FDSST.iml" filepath="$PROJECT_DIR$/.idea/modules/Android-DJI-FDSST.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-DJI-FDSST.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-DJI-FDSST.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/opcv430android/Android-DJI-FDSST.opcv430android.iml" filepath="$PROJECT_DIR$/.idea/modules/opcv430android/Android-DJI-FDSST.opcv430android.iml" />
+    </modules>
+  </component>
+</project>

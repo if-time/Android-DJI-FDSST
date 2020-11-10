@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.jakewharton.timber:timber:4.5.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a2af7206f46f7abbf254c5f554f9af9c/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a2af7206f46f7abbf254c5f554f9af9c/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a2af7206f46f7abbf254c5f554f9af9c/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b0dbaeab7275bd9685b85d002a35380d/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b0dbaeab7275bd9685b85d002a35380d/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b0dbaeab7275bd9685b85d002a35380d/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jakewharton.timber/timber/4.5.1/83d32a652a999b15137a30ec153d45c448a8b4e1/timber-4.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

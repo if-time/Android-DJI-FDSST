@@ -1,0 +1,2 @@
+include ':opcv430android'
+include ':app'

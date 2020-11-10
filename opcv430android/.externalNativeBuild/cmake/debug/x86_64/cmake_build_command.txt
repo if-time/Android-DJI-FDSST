@@ -1,0 +1,20 @@
+Executable : C:\Users\Dong\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
+arguments : 
+-HC:\Users\Dong\Desktop\GraduationProject\Android-DJI-FDSST\opcv430android\libcxx_helper
+-BC:\Users\Dong\Desktop\GraduationProject\Android-DJI-FDSST\opcv430android\.externalNativeBuild\cmake\debug\x86_64
+-DANDROID_ABI=x86_64
+-DANDROID_PLATFORM=android-19
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\Dong\Desktop\GraduationProject\Android-DJI-FDSST\opcv430android\build\intermediates\cmake\debug\obj\x86_64
+-DCMAKE_BUILD_TYPE=Debug
+-DANDROID_NDK=C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DCMAKE_SYSTEM_VERSION=19
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_ANDROID_NDK=C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147
+-DCMAKE_TOOLCHAIN_FILE=C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147\build\cmake\android.toolchain.cmake
+-G Ninja
+-DCMAKE_MAKE_PROGRAM=C:\Users\Dong\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+-DANDROID_STL=c++_shared
+jvmArgs : 
+
