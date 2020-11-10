@@ -97,11 +97,8 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
-    compileOnly 'com.dji:dji-sdk-provided:4.13'
+    compileOnly 'com.dji:dji-sdk-provided:4.13.1'
     implementation project(path: ':opcv430android')
-//    compileOnly 'com.dji:dji-sdk-' +
-//            '' +
-//            ':4.11'
 
     implementation 'org.tensorflow:tensorflow-android:1.13.1'
 
@@ -111,6 +108,9 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.annotation:annotation:1.1.0'
+
+    // tensorflow
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
 }
 
 // Please uncomment the following code if you use your own sdk version.

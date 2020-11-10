@@ -28,7 +28,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
-import com.dji.FPVDemo.detection.TensorFlowObjectDetectionAPIModel;
 import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
 import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
@@ -39,7 +38,6 @@ import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.TouchPaintView;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
