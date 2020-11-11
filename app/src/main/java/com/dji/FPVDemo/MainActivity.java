@@ -2,6 +2,7 @@ package com.dji.FPVDemo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -31,6 +33,8 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.model.LatLng;
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
 import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
@@ -54,14 +58,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import dji.common.battery.BatteryState;
 import dji.common.camera.SettingsDefinitions;
+import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
+import dji.common.flightcontroller.CompassCalibrationState;
+import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.simulator.SimulatorState;
+import dji.common.flightcontroller.virtualstick.FlightControlData;
+import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
+import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
+import dji.common.flightcontroller.virtualstick.VerticalControlMode;
+import dji.common.flightcontroller.virtualstick.YawControlMode;
+import dji.common.gimbal.GimbalState;
 import dji.common.product.Model;
 import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.Camera;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
+import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.MissionControl;
+import dji.sdk.products.Aircraft;
+import dji.sdk.sdkmanager.DJISDKManager;
 import io.reactivex.functions.Consumer;
 
 
@@ -96,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 
+    private FlightController mFlightController;
+
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
     // Codec for video live view
     protected DJICodecManager mCodecManager = null;
@@ -113,22 +136,33 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     private BorderedText borderedText;
 
     //    private AutoFitTextureView mVideoSurface = null;
-    private TextureView mVideoSurface = null;
-    private Button btnThermal;
-    private Button btnThread;
+    @BindView(R.id.video_previewer_surface)
+    TextureView mVideoSurface = null;
+    @BindView(R.id.btnThermal)
+    Button btnThermal;
+    @BindView(R.id.btnThread)
+    Button btnThread;
 
-    private TextView tvFPS;
+    @BindView(R.id.tvFPS)
+    TextView tvFPS;
 
-    private ImageView imageViewForFrame;
+    @BindView(R.id.imageView)
+    ImageView imageViewForFrame;
 
-    private TouchPaintView touchView;
+    @BindView(R.id.touch_view)
+    TouchPaintView touchView;
 
-    private OverlayView trackingOverlay;
+    @BindView(R.id.tracking_overlay)
+    OverlayView trackingOverlay;
+
+    @BindView(R.id.ivSimulatorStop)
+    ImageView ivSimulatorStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        ButterKnife.bind(this);
 
         final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
         borderedText = new BorderedText(textSizePx);
@@ -138,6 +172,9 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         getDisplaySize();
         initUI();
         initListener();
+
+        // 注册无人机监听广播
+        initFlightController();
 
         try {
             // create either a new ImageClassifierQuantizedMobileNet or an ImageClassifierFloatInception
@@ -149,23 +186,25 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     private void initUI() {
         // init mVideoSurface
-        mVideoSurface = findViewById(R.id.video_previewer_surface);
-        imageViewForFrame = findViewById(R.id.imageView);
+//        mVideoSurface = findViewById(R.id.video_previewer_surface);
+//        imageViewForFrame = findViewById(R.id.imageView);
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
         }
 
-        btnThermal = findViewById(R.id.btnThermal);
-        btnThermal.setOnClickListener(this);
-        btnThread = findViewById(R.id.btnThread);
-        btnThread.setOnClickListener(this);
+//        btnThermal = findViewById(R.id.btnThermal);
+//        btnThermal.setOnClickListener(this);
+//        btnThread = findViewById(R.id.btnThread);
+//        btnThread.setOnClickListener(this);
 
-        touchView = (TouchPaintView) findViewById(R.id.touch_view);
+//        touchView = (TouchPaintView) findViewById(R.id.touch_view);
 
-        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
+//        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
 
-        tvFPS = findViewById(R.id.tvFPS);
+//        tvFPS = findViewById(R.id.tvFPS);
+
+//        ivSimulatorStop = findViewById(R.id.ivSimulatorStop);
 
         RxView.clicks(btnThermal).throttleFirst(2, TimeUnit.SECONDS).subscribe(new Consumer<Object>() {
             @Override
@@ -326,8 +365,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         Log.e(TAG, "onResume");
         super.onResume();
         initPreviewer();
-        onProductChange();
-
+//        onProductChange();
+        initFlightController();
         if (mVideoSurface == null) {
             Log.e(TAG, "mVideoSurface is null");
         }
@@ -352,12 +391,25 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     @Override
     protected void onDestroy() {
         uninitPreviewer();
+        // 关闭虚拟摇杆
+        if (mFlightController != null) {
+            mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+                    if (djiError != null) {
+                        setResultToToast(djiError.getDescription());
+                    } else {
+                        setResultToToast("虚拟摇杆关闭");
+                    }
+                }
+            });
+        }
         super.onDestroy();
     }
 
-    protected void onProductChange() {
-        initPreviewer();
-    }
+//    protected void onProductChange() {
+//        initPreviewer();
+//    }
 
     private void initPreviewer() {
 
@@ -728,6 +780,90 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             @Override
             public void run() {
                 tvFPS.setText("FPS: " + fps);
+            }
+        });
+    }
+
+    /**
+     * 虚拟摇杆功能，可通过程序控制无人机的前、后、左、右、上升、下降的飞行动作
+     *
+     * @param leftRight     正数为右，负数为左
+     * @param frontBack     正数为前，负数为后
+     * @param turnLeftRight
+     * @param upDown        正数为上升，负数为下降
+     */
+    private void flyControl(float leftRight, float frontBack, float turnLeftRight, float upDown) {
+        if (mFlightController == null) {
+            BaseProduct product = DJIApplication.getProductInstance();
+            if (product == null || !product.isConnected()) {
+                setResultToToast("未连接到无人机！");
+            } else {
+                if (product instanceof Aircraft) {
+                    Aircraft aircraft = (Aircraft) DJISDKManager.getInstance().getProduct();
+                    mFlightController = aircraft.getFlightController();
+                }
+            }
+        }
+
+        mFlightController.sendVirtualStickFlightControlData(new FlightControlData(leftRight, frontBack, turnLeftRight, upDown), new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError djiError) {
+                if (djiError != null) {
+                    setResultToToast("flyControl_DJIError: " + djiError.getDescription());
+                }
+            }
+        });
+    }
+
+    /**
+     * 初始化无人机控制，并获取无人机位置、各种状态
+     */
+    private void initFlightController() {
+        BaseProduct product = DJIApplication.getProductInstance();
+        if (product == null || !product.isConnected()) {
+            setResultToToast("未连接到无人机！");
+        } else {
+            if (product instanceof Aircraft) {
+                //                mFlightController = ((Aircraft) product).getFlightController();
+                Aircraft aircraft = (Aircraft) DJISDKManager.getInstance().getProduct();
+                mFlightController = aircraft.getFlightController();
+
+            }
+        }
+        // 无人机
+        if (mFlightController != null) {
+            mFlightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+            mFlightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+            //            mFlightController.setYawControlMode(YawControlMode.ANGLE);
+            mFlightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+            mFlightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+            mFlightController.getSimulator().setStateCallback(new SimulatorState.Callback() {
+                @Override
+                public void onUpdate(final SimulatorState stateData) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            String yaw = String.format("%.2f", stateData.getYaw());
+                            String pitch = String.format("%.2f", stateData.getPitch());
+                            String roll = String.format("%.2f", stateData.getRoll());
+                            String positionX = String.format("%.2f", stateData.getPositionX());
+                            String positionY = String.format("%.2f", stateData.getPositionY());
+                            String positionZ = String.format("%.2f", stateData.getPositionZ());
+                            Log.i("Timeline", "simulator yaw:" + yaw + " |pitch:" + pitch + " |roll" + roll + " |positionX:" + positionX + " |positionY" + positionY + " |positionZ:" + positionZ);
+                        }
+                    });
+                }
+            });
+
+        }
+    }
+
+    private void setResultToToast(final String string) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, string, Toast.LENGTH_SHORT).show();
             }
         });
     }

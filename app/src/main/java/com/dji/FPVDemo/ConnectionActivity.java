@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.dji.FPVDemo.test.BuglyMainActivity;
+import com.dji.FPVDemo.test.logan.LoganMainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -286,7 +287,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                 break;
             }
             case R.id.btnTest: {
-                Intent intent = new Intent(this, BuglyMainActivity.class);
+                Intent intent = new Intent(this, LoganMainActivity.class);
                 startActivity(intent);
                 break;
             }

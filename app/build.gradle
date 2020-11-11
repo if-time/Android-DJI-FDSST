@@ -48,12 +48,16 @@ android {
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
-            version "3.6.0"
+            version "3.10.2"
 //            arguments "-DANDROID_ARM_NEON=TRUE"
         }
     }
     dexOptions {
         javaMaxHeapSize "4g"
+    }
+
+    aaptOptions {
+        noCompress "tflite"
     }
 
     packagingOptions {
@@ -123,10 +127,16 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
 
     // RxView
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    // ButterKnife
+    implementation 'com.jakewharton:butterknife:10.2.3'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
     // bugly
     implementation 'com.tencent.bugly:crashreport:3.2.3' //Bugly SDK
     implementation 'com.tencent.bugly:nativecrashreport:3.7.5' //Bugly NDK
+
+    // Logan
+    implementation 'com.dianping.android.sdk:logan:1.2.4'
 }
 
 // Please uncomment the following code if you use your own sdk version.
