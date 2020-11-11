@@ -3,7 +3,8 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <!--    <com.dji.FPVDemo.view.AutoFitTextureView-->
     <!--        android:id="@+id/video_previewer_surface"-->
@@ -40,6 +41,15 @@
         android:text="60"
         android:textColor="@color/red"
         android:textSize="21sp" />
+
+    <ImageView
+        android:id="@+id/ivSimulatorStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:src="@mipmap/rc_mode"
+        android:layout_below="@+id/llbtn"
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/llbtn"

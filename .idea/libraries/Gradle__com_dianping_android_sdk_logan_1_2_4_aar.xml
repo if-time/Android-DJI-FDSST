@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dianping.android.sdk:logan:1.2.4@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8ea6aed51fa57e579178f1451884ed/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8ea6aed51fa57e579178f1451884ed/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8ea6aed51fa57e579178f1451884ed/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.dianping.android.sdk/logan/1.2.4/c2723bd1179a50a7909e8e4e09dfce8bd0b8c8e9/logan-1.2.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

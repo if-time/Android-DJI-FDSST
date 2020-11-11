@@ -3,12 +3,17 @@ package com.dji.FPVDemo;
 import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.dianping.logan.Logan;
+import com.dianping.logan.LoganConfig;
+import com.dianping.logan.OnLoganProtocolStatus;
 import com.secneo.sdk.Helper;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xsj.crasheye.Crasheye;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -40,6 +45,37 @@ public class MApplication extends Application {
         djiApplication.onCreate();
         sContext = getApplicationContext();
 
+        initLogan();
+        Logan.w("MyApplication onCreate", 3);
+        Logan.w("MyApplication onCreate", 3);
+        Logan.w("MyApplication onCreate", 3);
+        initBugly();
+
+    }
+
+    public static Context getContext() {
+        return sContext;
+    }
+
+    private void initLogan() {
+        LoganConfig config = new LoganConfig.Builder()
+                .setCachePath(getApplicationContext().getFilesDir().getAbsolutePath())
+                .setPath(getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
+                        + File.separator + "logan_v1")
+                .setEncryptKey16("0123456789012345".getBytes())
+                .setEncryptIV16("0123456789012345".getBytes())
+                .build();
+        Logan.setDebug(true);
+        Logan.setOnLoganProtocolStatus(new OnLoganProtocolStatus() {
+            @Override
+            public void loganProtocolStatus(String cmd, int code) {
+                Log.d("dongLogan", "clogan > cmd : " + cmd + " | " + "code : " + code);
+            }
+        });
+        Logan.init(config);
+    }
+
+    private void initBugly() {
         // 获取当前包名
         String packageName = sContext.getPackageName();
         // 获取当前进程名
@@ -51,9 +87,6 @@ public class MApplication extends Application {
         CrashReport.initCrashReport(sContext, "4e60bd54eb", true, strategy);
     }
 
-    public static Context getContext() {
-        return sContext;
-    }
     /**
      * 获取进程号对应的进程名
      *
