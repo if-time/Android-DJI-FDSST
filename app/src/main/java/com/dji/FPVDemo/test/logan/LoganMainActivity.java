@@ -123,7 +123,7 @@ public class LoganMainActivity extends AppCompatActivity {
         String buildVersion = "";
         String appVersion = "";
         try {
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
             appVersion = pInfo.versionName;
             buildVersion = String.valueOf(pInfo.versionCode);
         } catch (PackageManager.NameNotFoundException e) {
@@ -132,7 +132,8 @@ public class LoganMainActivity extends AppCompatActivity {
         final String url = "http://211.87.231.41:8011/logan-server/logan/upload.json";
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
         final String date = dataFormat.format(new Date(System.currentTimeMillis()));
-        Logan.s(url, date, "1", "logan-test-unionid", "deviceId", buildVersion, appVersion, new SendLogCallback() {
+        Log.i("donglogan", "url: " + url + " date: " + date + " buildVersion: " + buildVersion + " appVersion: " + appVersion);
+        Logan.s(url, date, "2", "com.dji", "deviceIdsua", buildVersion, appVersion, new SendLogCallback() {
             @Override
             public void onLogSendCompleted(int statusCode, byte[] data) {
                 final String resultData = data != null ? new String(data) : "";

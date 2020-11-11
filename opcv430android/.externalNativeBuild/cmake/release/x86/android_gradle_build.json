@@ -1,12 +1,11 @@
 {
   "stringTable": {
     "0": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/release/x86",
-    "1": "--target=i686-none-linux-android19 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC"
+    "1": "--target=i686-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/x86-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/android/support/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++abi/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot/usr/include/i686-linux-android -D__ANDROID_API__=19 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11 -O2 -DNDEBUG -fPIC"
   },
   "buildFiles": [
-    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\android.toolchain.cmake",
-    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\CMakeLists.txt",
-    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\platforms.cmake"
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\CMakeLists.txt"
   ],
   "cleanCommands": [
     "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86 --target clean"
@@ -15,7 +14,7 @@
     "opencv_jni_shared-Release-x86": {
       "buildCommand": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86 --target opencv_jni_shared",
       "buildType": "release",
-      "toolchain": "3239077757",
+      "toolchain": "945064022",
       "abi": "x86",
       "artifactName": "opencv_jni_shared",
       "files": [
@@ -25,12 +24,13 @@
           "workingDirectoryOrdinal": 0
         }
       ],
+      "headers": [],
       "output": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\.externalNativeBuild\\cmake\\release\\x86\\libopencv_jni_shared.a"
     }
   },
   "toolchains": {
-    "3239077757": {
-      "cppCompilerExecutable": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    "945064022": {
+      "cppCompilerExecutable": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],
