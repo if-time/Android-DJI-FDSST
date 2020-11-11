@@ -59,6 +59,8 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_LOGS,
+            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
     };
     private List<String> missingPermission = new ArrayList<>();
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);

@@ -1,12 +1,11 @@
 {
   "stringTable": {
     "0": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/.externalNativeBuild/cmake/debug/arm64-v8a",
-    "1": "--target=aarch64-none-linux-android21 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O0 -fno-limit-debug-info -fPIC"
+    "1": "--target=aarch64-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/include/backward -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O0 -fno-limit-debug-info -fPIC"
   },
   "buildFiles": [
-    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\android.toolchain.cmake",
-    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\CMakeLists.txt",
-    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\build\\cmake\\platforms.cmake"
+    "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommands": [
     "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target clean"
@@ -15,7 +14,7 @@
     "native-lib-Debug-arm64-v8a": {
       "buildCommand": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe --build C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\.externalNativeBuild\\cmake\\debug\\arm64-v8a --target native-lib",
       "buildType": "debug",
-      "toolchain": "3239077757",
+      "toolchain": "945064022",
       "abi": "arm64-v8a",
       "artifactName": "native-lib",
       "files": [
@@ -40,8 +39,8 @@
     }
   },
   "toolchains": {
-    "3239077757": {
-      "cppCompilerExecutable": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    "945064022": {
+      "cppCompilerExecutable": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

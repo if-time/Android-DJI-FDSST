@@ -17,7 +17,7 @@
 rule CXX_COMPILER__opencv_jni_shared
   depfile = $DEP_FILE
   deps = gcc
-  command = C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147\toolchains\llvm\prebuilt\windows-x86_64\bin\clang++.exe --target=i686-none-linux-android19 --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot  $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  command = C:\Users\Dong\AppData\Local\Android\Sdk\ndk\16.1.4479499\toolchains\llvm\prebuilt\windows-x86_64\bin\clang++.exe --target=i686-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/x86-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot  $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
   description = Building CXX object $out
 
 
@@ -25,7 +25,7 @@ rule CXX_COMPILER__opencv_jni_shared
 # Rule for linking CXX static library.
 
 rule CXX_STATIC_LIBRARY_LINKER__opencv_jni_shared
-  command = cmd.exe /C "$PRE_LINK && C:\Users\Dong\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe -E remove $TARGET_FILE && C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147\toolchains\llvm\prebuilt\windows-x86_64\bin\i686-linux-android-ar.exe qc $TARGET_FILE $LINK_FLAGS $in && C:\Users\Dong\AppData\Local\Android\Sdk\ndk\21.3.6528147\toolchains\llvm\prebuilt\windows-x86_64\bin\i686-linux-android-ranlib.exe $TARGET_FILE && $POST_BUILD"
+  command = cmd.exe /C "$PRE_LINK && C:\Users\Dong\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe -E remove $TARGET_FILE && C:\Users\Dong\AppData\Local\Android\Sdk\ndk\16.1.4479499\toolchains\x86-4.9\prebuilt\windows-x86_64\bin\i686-linux-android-ar.exe qc $TARGET_FILE $LINK_FLAGS $in && C:\Users\Dong\AppData\Local\Android\Sdk\ndk\16.1.4479499\toolchains\x86-4.9\prebuilt\windows-x86_64\bin\i686-linux-android-ranlib.exe $TARGET_FILE && $POST_BUILD"
   description = Linking CXX static library $TARGET_FILE
   restat = $RESTAT
 

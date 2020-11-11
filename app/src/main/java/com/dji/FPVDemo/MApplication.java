@@ -61,7 +61,7 @@ public class MApplication extends Application {
         LoganConfig config = new LoganConfig.Builder()
                 .setCachePath(getApplicationContext().getFilesDir().getAbsolutePath())
                 .setPath(getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
-                        + File.separator + "logan_v1")
+                        + File.separator + "logan_v2")
                 .setEncryptKey16("0123456789012345".getBytes())
                 .setEncryptIV16("0123456789012345".getBytes())
                 .build();
