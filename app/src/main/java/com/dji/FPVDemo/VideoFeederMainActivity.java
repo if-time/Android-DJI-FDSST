@@ -41,6 +41,7 @@ import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
 import com.dji.FPVDemo.tracking.KCFResultFormJNI;
 import com.dji.FPVDemo.utils.BorderedText;
+import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.LogUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
@@ -79,12 +80,14 @@ import dji.sdk.sdkmanager.DJISDKManager;
 
 
 /**
+ * 主要是提供视频预览
+ *
  * @author dongsiyuan
  * @date 2020年10月27日
  */
-public class MainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
+public class VideoFeederMainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = VideoFeederMainActivity.class.getName();
 
     private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
 
@@ -168,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main_video_feeder);
         ButterKnife.bind(this);
 
         final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
@@ -221,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
                 String titleList = "选择哪种跟踪算法？";
                 final String[] languanges = new String[]{"KCF", "FDSST"};
-                DialogFragmentHelper.showListDialog(MainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
+                DialogFragmentHelper.showListDialog(VideoFeederMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
                     @Override
                     public void onDataResult(Integer result) {
                         showToast(languanges[result]);
@@ -445,10 +448,6 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         Log.i(TAG, "onSurfaceTextureUpdated: 1111111111");
     }
 
-    private void showToast(String s) {
-        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-    }
-
     /**
      * 启动后台线程
      */
@@ -483,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     }
 
     /**
-     * 定期识别
+     * 识别任务
      */
     private Runnable periodicDetection = new Runnable() {
         @Override
@@ -498,11 +497,9 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     };
 
     /**
-     * tensorFlow识别
+     * 识别
      */
     private void classifyFrame() {
-        //detectionForTensorFlow();
-
         switch (trackerType) {
             case USE_KCF:
                 trackingForKCF();
@@ -625,7 +622,6 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         }
     }
 
-
     /**
      * detectionForTensorFlow
      */
@@ -741,18 +737,11 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                         WriteFileUtil.putStringToExternalStorage(l_y + "\r\n", dir, "l_y.txt", true);
                         WriteFileUtil.putStringToExternalStorage(r_x + "\r\n", dir, "r_x.txt", true);
                         WriteFileUtil.putStringToExternalStorage(r_y + "\r\n", dir, "r_y.txt", true);
-                        WriteFileUtil.putStringToExternalStorage(currentTime() + "\r\n", dir, "time_.txt", true);
-
+                        WriteFileUtil.putStringToExternalStorage(CommonUtils.currentTime() + "\r\n", dir, "time_.txt", true);
                     }
                 }
             }
         });
-    }
-
-    private String currentTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        Date curDate = new Date(System.currentTimeMillis());
-        return sdf.format(curDate);
     }
 
     private void setFPS(final long fps) {
@@ -766,10 +755,11 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
     /**
      * Push Status to TextView
+     *
      * @param string
      */
     private void setResultToText(final String string) {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tvTrackingPushInfo.setText(string);
@@ -853,12 +843,16 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     }
 
     private void setResultToToast(final String string) {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, string, Toast.LENGTH_SHORT).show();
+                Toast.makeText(VideoFeederMainActivity.this, string, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showToast(String s) {
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btnThermalCamera)
@@ -867,12 +861,22 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         showToast("红外");
     }
 
+    /**
+     * 开启关闭线程
+     */
     @OnClick(R.id.btnBackgroundThread)
     public void clickBtnBackgroundThread() {
-        startBackgroundThread();
-        tpvTouchFrame.clearView();
+        if (runDetection) {
+            stopBackgroundThread();
+        } else {
+            startBackgroundThread();
+            tpvTouchFrame.clearView();
+        }
     }
 
+    /**
+     * 识别时显示识别信息
+     */
     @OnClick(R.id.ivTrackingDrawerControlIb)
     public void slidingDrawerOpenClose() {
         if (sdTrackingDrawer.isOpened()) {
@@ -886,8 +890,11 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         }
     }
 
+    /**
+     * 通过点击按钮来开关虚拟摇杆
+     */
     @OnClick(R.id.ivSimulatorSetting)
-    public void simulatorStatus() {
+    public void simulatorStatusEnabled() {
         if (mFlightController != null) {
             mFlightController.getVirtualStickModeEnabled(new CommonCallbacks.CompletionCallbackWith<Boolean>() {
                 @Override
@@ -895,52 +902,45 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                     Log.i("getVirtualStick", "onSuccess: " + aBoolean);
                     setResultToToast("虚拟摇杆" + aBoolean);
                     Logan.w("getVirtualStick " + aBoolean, 2);
-                    if (!aBoolean) {
-                        mFlightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError != null) {
-                                    setResultToToast(djiError.getDescription());
-                                } else {
-                                    isSimulator = true;
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ivSimulatorSetting.setImageResource(R.mipmap.ic_irtual_joystick);
-                                            setResultToToast("虚拟摇杆开启");
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
-                            @Override
-                            public void onResult(DJIError djiError) {
-                                if (djiError != null) {
-                                    setResultToToast(djiError.getDescription());
-                                } else {
-                                    isSimulator = false;
-                                    setResultToToast("虚拟摇杆关闭");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            setResultToToast("simulator_stop_iv, 虚拟摇杆关闭");
-                                            ivSimulatorSetting.setImageResource(R.mipmap.ic_remote_control);
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
+                    setVirtualStickModeEnabled(aBoolean);
                 }
 
                 @Override
                 public void onFailure(DJIError djiError) {
-
+                    setResultToToast("虚拟摇杆开启失败");
                 }
             });
         }
+    }
+
+    /**
+     * 调用DJI的API设置虚拟摇杆
+     *
+     * @param aBoolean
+     */
+    private void setVirtualStickModeEnabled(Boolean aBoolean) {
+        mFlightController.setVirtualStickModeEnabled(!aBoolean, new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError djiError) {
+                if (djiError != null) {
+                    setResultToToast(djiError.getDescription());
+                } else {
+                    isSimulator = !aBoolean;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!aBoolean) {
+                                ivSimulatorSetting.setImageResource(R.mipmap.ic_irtual_joystick);
+                                setResultToToast("虚拟摇杆开启");
+                            } else {
+                                setResultToToast("simulator_stop_iv, 虚拟摇杆关闭");
+                                ivSimulatorSetting.setImageResource(R.mipmap.ic_remote_control);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 }

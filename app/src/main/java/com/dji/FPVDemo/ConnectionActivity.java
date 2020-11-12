@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.dji.FPVDemo.test.BuglyMainActivity;
 import com.dji.FPVDemo.test.logan.LoganMainActivity;
 
 import java.util.ArrayList;
@@ -284,7 +283,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
         switch (v.getId()) {
 
             case R.id.btn_open: {
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, VideoFeederMainActivity.class);
                 startActivity(intent);
                 break;
             }
