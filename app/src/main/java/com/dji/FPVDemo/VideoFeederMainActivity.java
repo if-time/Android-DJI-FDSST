@@ -79,12 +79,13 @@ import dji.sdk.sdkmanager.DJISDKManager;
 
 
 /**
+ * 主要是提供视频预览
  * @author dongsiyuan
  * @date 2020年10月27日
  */
-public class MainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
+public class VideoFeederMainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = VideoFeederMainActivity.class.getName();
 
     private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
 
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main_video_feeder);
         ButterKnife.bind(this);
 
         final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
                 String titleList = "选择哪种跟踪算法？";
                 final String[] languanges = new String[]{"KCF", "FDSST"};
-                DialogFragmentHelper.showListDialog(MainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
+                DialogFragmentHelper.showListDialog(VideoFeederMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
                     @Override
                     public void onDataResult(Integer result) {
                         showToast(languanges[result]);
@@ -769,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
      * @param string
      */
     private void setResultToText(final String string) {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        VideoFeederMainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 tvTrackingPushInfo.setText(string);
@@ -853,10 +854,10 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     }
 
     private void setResultToToast(final String string) {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        VideoFeederMainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(MainActivity.this, string, Toast.LENGTH_SHORT).show();
+                Toast.makeText(VideoFeederMainActivity.this, string, Toast.LENGTH_SHORT).show();
             }
         });
     }

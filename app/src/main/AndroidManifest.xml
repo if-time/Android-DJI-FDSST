@@ -67,7 +67,7 @@
                 android:resource="@xml/accessory_filter" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".VideoFeederMainActivity"
             android:screenOrientation="landscape" />
 
         <activity android:name=".test.logan.LoganMainActivity" />
