@@ -1,5 +1,5 @@
 # ninja log v5
-4	2255	626799931	CMakeFiles/native-lib.dir/fdsst/fhog.cpp.o	aab94885a6a7da28
-0	2265	626799931	CMakeFiles/native-lib.dir/native-lib.cpp.o	bf9088ff6ad7cb03
-2	2342	626799931	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	e8fe10193d0cd711
-2342	2620	626799931	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	90dd5fd25088a81b
+4	2579	626848580	CMakeFiles/native-lib.dir/fdsst/fhog.cpp.o	aab94885a6a7da28
+0	2617	626848580	CMakeFiles/native-lib.dir/native-lib.cpp.o	bf9088ff6ad7cb03
+3	2765	626848580	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	e8fe10193d0cd711
+2765	3051	626848581	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/arm64-v8a/libnative-lib.so	90dd5fd25088a81b

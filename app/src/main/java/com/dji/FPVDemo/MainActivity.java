@@ -1,8 +1,6 @@
 package com.dji.FPVDemo;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,7 +23,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,8 +33,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.amap.api.maps.CoordinateConverter;
-import com.amap.api.maps.model.LatLng;
+import com.dianping.logan.Logan;
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
 import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
@@ -42,13 +41,13 @@ import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
 import com.dji.FPVDemo.tracking.KCFResultFormJNI;
 import com.dji.FPVDemo.utils.BorderedText;
+import com.dji.FPVDemo.utils.LogUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.MultiBoxTracker;
 import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.TouchPaintView;
-import com.jakewharton.rxbinding2.view.RxView;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,23 +55,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dji.common.battery.BatteryState;
+import butterknife.OnClick;
 import dji.common.camera.SettingsDefinitions;
-import dji.common.camera.SystemState;
 import dji.common.error.DJIError;
-import dji.common.flightcontroller.CompassCalibrationState;
-import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.simulator.SimulatorState;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
-import dji.common.gimbal.GimbalState;
 import dji.common.product.Model;
 import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseProduct;
@@ -80,17 +74,15 @@ import dji.sdk.camera.Camera;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 import dji.sdk.flightcontroller.FlightController;
-import dji.sdk.mission.MissionControl;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
-import io.reactivex.functions.Consumer;
 
 
 /**
  * @author dongsiyuan
  * @date 2020年10月27日
  */
-public class MainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -112,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     private static float canvasHeight = 0;
 
     private boolean runDetection = false;
+    // 虚拟摇杆默认是关闭的
+    private boolean isSimulator = false;
+
+    private float controlValueIncX;
+    private float controlValueIncY;
+    private float dxCenterScreenObject;
+    private float dyCenterScreenObject;
 
     private enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW}
 
@@ -136,27 +135,35 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
     private BorderedText borderedText;
 
     //    private AutoFitTextureView mVideoSurface = null;
-    @BindView(R.id.video_previewer_surface)
-    TextureView mVideoSurface = null;
-    @BindView(R.id.btnThermal)
-    Button btnThermal;
-    @BindView(R.id.btnThread)
-    Button btnThread;
+    @BindView(R.id.tvVideoPreviewer)
+    TextureView tvVideoPreviewer = null;
+    @BindView(R.id.btnThermalCamera)
+    Button btnThermalCamera;
+    @BindView(R.id.btnBackgroundThread)
+    Button btnBackgroundThread;
 
     @BindView(R.id.tvFPS)
     TextView tvFPS;
 
-    @BindView(R.id.imageView)
-    ImageView imageViewForFrame;
+    @BindView(R.id.ivImageViewForFrame)
+    ImageView ivImageViewForFrame;
 
-    @BindView(R.id.touch_view)
-    TouchPaintView touchView;
+    @BindView(R.id.tpvTouchFrame)
+    TouchPaintView tpvTouchFrame;
 
-    @BindView(R.id.tracking_overlay)
-    OverlayView trackingOverlay;
+    @BindView(R.id.ovTrackingOverlay)
+    OverlayView ovTrackingOverlay;
 
-    @BindView(R.id.ivSimulatorStop)
-    ImageView ivSimulatorStop;
+    @BindView(R.id.ivSimulatorSetting)
+    ImageView ivSimulatorSetting;
+
+    //详情 抽屉
+    @BindView(R.id.ivTrackingDrawerControlIb)
+    ImageButton ivTrackingDrawerControlIb;
+    @BindView(R.id.sdTrackingDrawer)
+    SlidingDrawer sdTrackingDrawer;
+    @BindView(R.id.tvTrackingPushInfo)
+    TextView tvTrackingPushInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         tracker = new MultiBoxTracker(this);
 
         getDisplaySize();
-        initUI();
+
         initListener();
 
         // 注册无人机监听广播
@@ -184,37 +191,11 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         }
     }
 
-    private void initUI() {
-        // init mVideoSurface
-//        mVideoSurface = findViewById(R.id.video_previewer_surface);
-//        imageViewForFrame = findViewById(R.id.imageView);
-
-        if (null != mVideoSurface) {
-            mVideoSurface.setSurfaceTextureListener(this);
-        }
-
-//        btnThermal = findViewById(R.id.btnThermal);
-//        btnThermal.setOnClickListener(this);
-//        btnThread = findViewById(R.id.btnThread);
-//        btnThread.setOnClickListener(this);
-
-//        touchView = (TouchPaintView) findViewById(R.id.touch_view);
-
-//        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
-
-//        tvFPS = findViewById(R.id.tvFPS);
-
-//        ivSimulatorStop = findViewById(R.id.ivSimulatorStop);
-
-        RxView.clicks(btnThermal).throttleFirst(2, TimeUnit.SECONDS).subscribe(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) throws Exception {
-
-            }
-        });
-    }
-
     private void initListener() {
+
+        if (null != tvVideoPreviewer) {
+            tvVideoPreviewer.setSurfaceTextureListener(this);
+        }
 
         // The callback for receiving the raw H264 video data for camera live view
         mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
@@ -229,12 +210,12 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
         // 来自TouchPaintView
         // 确定点击到了画框区域
-        touchView.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
+        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
             @Override
             public void confirmForTracking(final RectF rectFForFrame) {
                 // showToast("回调");
                 // 截取此区域的bitmap传入fdsst中
-                final Bitmap bitmapForTracking = mVideoSurface.getBitmap();
+                final Bitmap bitmapForTracking = tvVideoPreviewer.getBitmap();
 
 //                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
 
@@ -262,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             }
         });
 
-        trackingOverlay.addCallback(new OverlayView.DrawCallback() {
+        ovTrackingOverlay.addCallback(new OverlayView.DrawCallback() {
             @Override
             public void drawCallback(final Canvas canvas) {
                 tracker.draw(canvas);
@@ -367,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
         initPreviewer();
 //        onProductChange();
         initFlightController();
-        if (mVideoSurface == null) {
+        if (tvVideoPreviewer == null) {
             Log.e(TAG, "mVideoSurface is null");
         }
     }
@@ -419,8 +400,8 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             //            showToast(getString(R.string.disconnected));
         } else {
             if (!product.getModel().equals(Model.UNKNOWN_AIRCRAFT)) {
-                if (null != mVideoSurface) {
-                    mVideoSurface.setSurfaceTextureListener(this);
+                if (null != tvVideoPreviewer) {
+                    tvVideoPreviewer.setSurfaceTextureListener(this);
                 }
                 VideoFeeder.getInstance().getPrimaryVideoFeed().addVideoDataListener(mReceivedVideoDataListener);
             }
@@ -543,15 +524,15 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
      * 通过FDSST进行跟踪
      */
     private void trackingForFDSST() {
-        canvasWidth = mVideoSurface.getWidth();
-        canvasHeight = mVideoSurface.getHeight();
-        imageViewForFrame.getLayoutParams().width = mVideoSurface.getWidth();
-        imageViewForFrame.getLayoutParams().height = mVideoSurface.getHeight();
+        canvasWidth = tvVideoPreviewer.getWidth();
+        canvasHeight = tvVideoPreviewer.getHeight();
+        ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
+        ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
 
         final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(croppedBitmap);
 
-        Bitmap bitmap = mVideoSurface.getBitmap();
+        Bitmap bitmap = tvVideoPreviewer.getBitmap();
 
         if (bitmap == null) {
             showToast("bitmap == null");
@@ -563,7 +544,23 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
             FDSSTResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
             bitmap.recycle();
-            showToast("ms: " + (System.currentTimeMillis() - start));
+
+            dxCenterScreenObject = widthDisplay / 2 - result.x + result.width / 2;
+            dyCenterScreenObject = heightDisplay / 2 - result.y + result.height / 2;
+
+            controlValueIncX = (float) (dxCenterScreenObject * 0.0009f);
+            controlValueIncY = (float) (dyCenterScreenObject * 0.0009f);
+            flyControl((-1) * controlValueIncX, controlValueIncY, 0, 0);
+
+            StringBuffer sb = new StringBuffer();
+            LogUtil.addLineToSB(sb, "center_x: ", Math.round((result.x + result.width / 2) * 100) / 100);
+            LogUtil.addLineToSB(sb, "center_y: ", Math.round((result.y + result.height / 2) * 100) / 100);
+            LogUtil.addLineToSB(sb, "距离屏幕中心 x(px): ", Math.round((dxCenterScreenObject) * 100) / 100);
+            LogUtil.addLineToSB(sb, "距离屏幕中心 y(px): ", Math.round((dyCenterScreenObject) * 100) / 100);
+            LogUtil.addLineToSB(sb, "controlValueIncX: ", controlValueIncX);
+            LogUtil.addLineToSB(sb, "controlValueIncY: ", controlValueIncY);
+            setResultToText(sb.toString());
+//            showToast("ms: " + (System.currentTimeMillis() - start));
             setFPS(1000 / (System.currentTimeMillis() - start));
             Paint paint = new Paint();
             paint.setColor(Color.RED);
@@ -574,10 +571,10 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             //            showToast(result.x + " " + result.y + " " + (result.width + result.x) + " " + (result.height + result.y));
             canvas.drawRect(result.x, result.y, result.width + result.x, result.height + result.y, paint);
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
-            imageViewForFrame.post(new Runnable() {
+            ivImageViewForFrame.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageViewForFrame.setImageBitmap(croppedBitmap);
+                    ivImageViewForFrame.setImageBitmap(croppedBitmap);
                 }
             });
         }
@@ -587,15 +584,15 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
      * 通过KCF进行跟踪
      */
     private void trackingForKCF() {
-        canvasWidth = mVideoSurface.getWidth();
-        canvasHeight = mVideoSurface.getHeight();
-        imageViewForFrame.getLayoutParams().width = mVideoSurface.getWidth();
-        imageViewForFrame.getLayoutParams().height = mVideoSurface.getHeight();
+        canvasWidth = tvVideoPreviewer.getWidth();
+        canvasHeight = tvVideoPreviewer.getHeight();
+        ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
+        ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
 
         final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(croppedBitmap);
 
-        Bitmap bitmap = mVideoSurface.getBitmap();
+        Bitmap bitmap = tvVideoPreviewer.getBitmap();
 
         if (bitmap == null) {
             showToast("bitmap == null");
@@ -619,10 +616,10 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 //            showToast(result.x + " " + result.y + " " + (result.width + result.x) + " " + (result.height + result.y));
             canvas.drawRect(result.x, result.y, result.width + result.x, result.height + result.y, paint);
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
-            imageViewForFrame.post(new Runnable() {
+            ivImageViewForFrame.post(new Runnable() {
                 @Override
                 public void run() {
-                    imageViewForFrame.setImageBitmap(croppedBitmap);
+                    ivImageViewForFrame.setImageBitmap(croppedBitmap);
                 }
             });
         }
@@ -633,13 +630,13 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
      * detectionForTensorFlow
      */
     private void detectionForTensorFlow() {
-        trackingOverlay.postInvalidate();
+        ovTrackingOverlay.postInvalidate();
         if (classifierFromTensorFlow == null) {
             showToast("Uninitialized Classifier or invalid context.");
             return;
         }
 
-        Bitmap bitmap = mVideoSurface.getBitmap(TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE);
+        Bitmap bitmap = tvVideoPreviewer.getBitmap(TF_OD_API_INPUT_SIZE, TF_OD_API_INPUT_SIZE);
 
         if (bitmap == null) {
             showToast("bitmap == null");
@@ -648,13 +645,13 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             //           showToast("bitmap == getWidth: " + bitmap.getWidth() + " bitmap == getHeight: " + bitmap.getHeight());
             final List<ClassifierFromTensorFlow.Recognition> results = classifierFromTensorFlow.recognizeImage(bitmap);
 
-            canvasWidth = mVideoSurface.getWidth();
-            canvasHeight = mVideoSurface.getHeight();
+            canvasWidth = tvVideoPreviewer.getWidth();
+            canvasHeight = tvVideoPreviewer.getHeight();
             //           if (mVideoSurface.getWidth() != imageView.getWidth() || mVideoSurface.getHeight() != imageView.getHeight()) {
             //               canvasWidth = mVideoSurface.getWidth();
             //               canvasHeight = mVideoSurface.getHeight();
-            imageViewForFrame.getLayoutParams().width = mVideoSurface.getWidth();
-            imageViewForFrame.getLayoutParams().height = mVideoSurface.getHeight();
+            ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
+            ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
             //           }
             bitmap.recycle();
 
@@ -710,30 +707,13 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
 
             }
             tracker.trackResultsFromTensorFlow(mappedRecognitions);
-            trackingOverlay.postInvalidate();
+            ovTrackingOverlay.postInvalidate();
 //            imageViewForFrame.post(new Runnable() {
 //                @Override
 //                public void run() {
 //                    imageViewForFrame.setImageBitmap(croppedBitmap);
 //                }
 //            });
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnThermal:
-                setThermalConfig();
-                showToast("红外");
-                break;
-            case R.id.btnThread:
-                startBackgroundThread();
-                touchView.clearView();
-                break;
-            default:
-                break;
         }
     }
 
@@ -780,6 +760,19 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
             @Override
             public void run() {
                 tvFPS.setText("FPS: " + fps);
+            }
+        });
+    }
+
+    /**
+     * Push Status to TextView
+     * @param string
+     */
+    private void setResultToText(final String string) {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvTrackingPushInfo.setText(string);
             }
         });
     }
@@ -866,6 +859,88 @@ public class MainActivity extends AppCompatActivity implements TextureView.Surfa
                 Toast.makeText(MainActivity.this, string, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @OnClick(R.id.btnThermalCamera)
+    public void setThermalCamera() {
+        setThermalConfig();
+        showToast("红外");
+    }
+
+    @OnClick(R.id.btnBackgroundThread)
+    public void clickBtnBackgroundThread() {
+        startBackgroundThread();
+        tpvTouchFrame.clearView();
+    }
+
+    @OnClick(R.id.ivTrackingDrawerControlIb)
+    public void slidingDrawerOpenClose() {
+        if (sdTrackingDrawer.isOpened()) {
+            Log.i("tracking_drawer", "isOpened: animateClose");
+            setResultToToast("tracking_drawer, isOpened?: animateClose");
+            sdTrackingDrawer.animateClose();
+        } else {
+            Log.i("tracking_drawer", "isClosed: animateOpen");
+            setResultToToast("tracking_drawer, isClosed?: animateOpen");
+            sdTrackingDrawer.animateOpen();
+        }
+    }
+
+    @OnClick(R.id.ivSimulatorSetting)
+    public void simulatorStatus() {
+        if (mFlightController != null) {
+            mFlightController.getVirtualStickModeEnabled(new CommonCallbacks.CompletionCallbackWith<Boolean>() {
+                @Override
+                public void onSuccess(Boolean aBoolean) {
+                    Log.i("getVirtualStick", "onSuccess: " + aBoolean);
+                    setResultToToast("虚拟摇杆" + aBoolean);
+                    Logan.w("getVirtualStick " + aBoolean, 2);
+                    if (!aBoolean) {
+                        mFlightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError != null) {
+                                    setResultToToast(djiError.getDescription());
+                                } else {
+                                    isSimulator = true;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ivSimulatorSetting.setImageResource(R.mipmap.ic_irtual_joystick);
+                                            setResultToToast("虚拟摇杆开启");
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
+                            @Override
+                            public void onResult(DJIError djiError) {
+                                if (djiError != null) {
+                                    setResultToToast(djiError.getDescription());
+                                } else {
+                                    isSimulator = false;
+                                    setResultToToast("虚拟摇杆关闭");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            setResultToToast("simulator_stop_iv, 虚拟摇杆关闭");
+                                            ivSimulatorSetting.setImageResource(R.mipmap.ic_remote_control);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(DJIError djiError) {
+
+                }
+            });
+        }
     }
 
 }
