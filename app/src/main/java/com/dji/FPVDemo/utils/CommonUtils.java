@@ -1,5 +1,8 @@
 package com.dji.FPVDemo.utils;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,5 +17,9 @@ public class CommonUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Date curDate = new Date(System.currentTimeMillis());
         return sdf.format(curDate);
+    }
+
+    public static void showToast(Context context, String s) {
+        Toast.makeText(context.getApplicationContext(), s, Toast.LENGTH_SHORT).show();
     }
 }
