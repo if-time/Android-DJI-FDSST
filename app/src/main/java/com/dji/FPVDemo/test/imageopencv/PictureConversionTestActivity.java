@@ -1,4 +1,4 @@
-package com.dji.FPVDemo.test;
+package com.dji.FPVDemo.test.imageopencv;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

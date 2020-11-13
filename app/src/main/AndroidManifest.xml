@@ -37,6 +37,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".test.drawerlayout.DrawerLayoutActivity"></activity>
+        <activity
+            android:name=".test.drawerlayout.DrawerlayoutNaviMainActivity"
+            android:label="@string/title_activity_drawerlayout_navi_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".test.RecyclerViewMainActivity" />
+        <activity android:name=".test.drawerlayout.CustomSideSlipMenuActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -68,10 +75,11 @@
         <activity
             android:name=".DJIMainActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".test.logan.LoganMainActivity" />
-        <activity android:name=".test.BuglyMainActivity" />
+        <activity android:name=".test.bugly.BuglyMainActivity" />
     </application>
 
 </manifest>
