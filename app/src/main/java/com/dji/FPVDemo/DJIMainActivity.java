@@ -31,7 +31,7 @@ import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.OverlayView;
-import com.dji.FPVDemo.view.TouchPaintView;
+import com.dji.FPVDemo.view.TouchFrameView;
 
 import java.io.File;
 
@@ -104,7 +104,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     ImageView ivImageViewForFrame;
 
     @BindView(R.id.tpvTouchFrame)
-    TouchPaintView tpvTouchFrame;
+    TouchFrameView tpvTouchFrame;
 
     @BindView(R.id.ovTrackingOverlay)
     OverlayView ovTrackingOverlay;

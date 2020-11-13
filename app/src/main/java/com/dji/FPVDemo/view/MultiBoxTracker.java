@@ -38,6 +38,8 @@ import java.util.Queue;
 
 /**
  * A tracker that handles non-max suppression and matches existing objects to new detections.
+ * @author dongsiyuan
+ * @date 2020/11/13 23:55
  */
 public class MultiBoxTracker {
     private static final float TEXT_SIZE_DIP = 18;
@@ -85,19 +87,12 @@ public class MultiBoxTracker {
         this.sensorOrientation = sensorOrientation;
     }
 
-    private Matrix getFrameToCanvasMatrix() {
-        return frameToCanvasMatrix;
-    }
-
     public synchronized void trackResultsFromTensorFlow(final List<ClassifierFromTensorFlow.Recognition> results) {
         processResultsFromTensorFlow(results);
     }
 
     private void processResultsFromTensorFlow(final List<ClassifierFromTensorFlow.Recognition> results) {
         final List<Pair<Float, ClassifierFromTensorFlow.Recognition>> rectsToTrack = new LinkedList<Pair<Float, ClassifierFromTensorFlow.Recognition>>();
-
-//        screenRects.clear();
-//        final Matrix rgbFrameToScreen = new Matrix(getFrameToCanvasMatrix());
 
         for (final ClassifierFromTensorFlow.Recognition result : results) {
             if (result.getLocation() == null) {
@@ -138,23 +133,17 @@ public class MultiBoxTracker {
     }
 
     public synchronized void draw(final Canvas canvas) {
-//        final boolean rotated = sensorOrientation % 180 == 90;
-//        final boolean rotated = false;
-//        final float multiplier = Math.min(canvas.getHeight() / (float) (rotated ? frameWidth : frameHeight), canvas.getWidth() / (float) (rotated ? frameHeight : frameWidth));
-//        frameToCanvasMatrix = ImageUtils.getTransformationMatrix(frameWidth, frameHeight, (int) (multiplier * (rotated ? frameHeight : frameWidth)), (int) (multiplier * (rotated ? frameWidth : frameHeight)), sensorOrientation, false);
         for (final TrackedRecognition recognition : trackedObjects) {
             final RectF trackedPos = new RectF(recognition.location);
 
-//            getFrameToCanvasMatrix().mapRect(trackedPos);
             boxPaint.setColor(recognition.color);
 
             float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
-//            canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+
             canvas.drawRect(trackedPos, boxPaint);
 
             final String labelString = !TextUtils.isEmpty(recognition.title) ?
                     String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence)) : String.format("%.2f", (100 * recognition.detectionConfidence));
-            //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString);
             borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
         }
     }
