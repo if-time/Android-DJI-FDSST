@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.dji.FPVDemo.test.drawclickevents.DrawSimpleCircleMainActivity;
 import com.dji.FPVDemo.test.logan.LoganMainActivity;
 
 import java.util.ArrayList;
@@ -288,7 +289,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                 break;
             }
             case R.id.btnTest: {
-                Intent intent = new Intent(this, LoganMainActivity.class);
+                Intent intent = new Intent(this, DrawSimpleCircleMainActivity.class);
                 startActivity(intent);
                 break;
             }

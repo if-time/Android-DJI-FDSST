@@ -16,16 +16,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.dji.FPVDemo.view.TouchPaintView
-        android:id="@+id/tpvTouchFrame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/ivImageViewForFrame"
+    <!--添加TouchFrameView的容器-->
+    <LinearLayout
+        android:id="@+id/llTouchFrameViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:orientation="horizontal" />
+
+    <!--添加View的容器-->
+    <LinearLayout
+        android:id="@+id/llViewForFrameContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivImageViewForFrame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+    </LinearLayout>
 
     <com.dji.FPVDemo.view.OverlayView
         android:id="@+id/ovTrackingOverlay"

@@ -11,11 +11,14 @@ import android.os.HandlerThread;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +34,7 @@ import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.OverlayView;
-import com.dji.FPVDemo.view.TouchPaintView;
+import com.dji.FPVDemo.view.TouchFrameView;
 
 import java.io.File;
 
@@ -89,6 +92,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private final Object lock = new Object();
 
+    private View touchFrameView;
+
     //    private AutoFitTextureView mVideoSurface = null;
     @BindView(R.id.tvVideoPreviewer)
     TextureView tvVideoPreviewer = null;
@@ -104,7 +109,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     ImageView ivImageViewForFrame;
 
     @BindView(R.id.tpvTouchFrame)
-    TouchPaintView tpvTouchFrame;
+    TouchFrameView tpvTouchFrame;
 
     @BindView(R.id.ovTrackingOverlay)
     OverlayView ovTrackingOverlay;
@@ -119,6 +124,11 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     SlidingDrawer sdTrackingDrawer;
     @BindView(R.id.tvTrackingPushInfo)
     TextView tvTrackingPushInfo;
+
+    @BindView(R.id.llTouchFrameViewContainer)
+    LinearLayout llTouchFrameViewContainer;
+    @BindView(R.id.llViewForFrameContainer)
+    LinearLayout llViewForFrameContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +175,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 DialogFragmentHelper.showListDialog(DJIMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
                     @Override
                     public void onDataResult(Integer result) {
-                        CommonUtils.showToast(DJIMainActivity.this,languanges[result]);
+                        CommonUtils.showToast(DJIMainActivity.this, languanges[result]);
                         switch (result) {
                             case 0:
                                 trackingInitForKCF(rectFForFrame, bitmapForTracking);
@@ -420,6 +430,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             }
         });
     }
+
     /**
      * Push Status to TextView
      *
@@ -493,14 +504,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-
-                            String yaw = String.format("%.2f", stateData.getYaw());
-                            String pitch = String.format("%.2f", stateData.getPitch());
-                            String roll = String.format("%.2f", stateData.getRoll());
-                            String positionX = String.format("%.2f", stateData.getPositionX());
-                            String positionY = String.format("%.2f", stateData.getPositionY());
-                            String positionZ = String.format("%.2f", stateData.getPositionZ());
-                            Log.i("Timeline", "simulator yaw:" + yaw + " |pitch:" + pitch + " |roll" + roll + " |positionX:" + positionX + " |positionY" + positionY + " |positionZ:" + positionZ);
                         }
                     });
                 }
@@ -518,10 +521,23 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         });
     }
 
+    /**
+     * touchFrameView
+     *
+     * @param view
+     */
+    public void addTouchFrameView(View view) {
+        touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
+
+        llViewForFrameContainer.addView(touchFrameView,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+    }
+
     @OnClick(R.id.btnThermalCamera)
     public void setThermalCamera() {
         setThermalConfig();
-        CommonUtils.showToast(DJIMainActivity.this,"红外");
+        CommonUtils.showToast(DJIMainActivity.this, "红外");
     }
 
     /**
@@ -607,9 +623,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     }
 
     protected abstract void trackingInitForKCF(RectF rectFForFrame, Bitmap bitmapForTracking);
+
     protected abstract void trackingInitForFDSST(RectF rectFForFrame, Bitmap bitmapForTracking);
 
     protected abstract void trackingForKCF();
+
     protected abstract void trackingForFDSST();
+
     protected abstract void detectionForTensorFlow();
 }
