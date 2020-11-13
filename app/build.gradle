@@ -112,7 +112,12 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
         exclude module: 'library-anti-distortion'
         exclude module: 'fly-safe-database'
     })
-    implementation files('libs\\crasheye-2.2.5.jar')
+    implementation files('libs/crasheye-2.2.5.jar')
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     compileOnly 'com.dji:dji-sdk-provided:4.13.1'
     implementation project(path: ':opcv430android')
 

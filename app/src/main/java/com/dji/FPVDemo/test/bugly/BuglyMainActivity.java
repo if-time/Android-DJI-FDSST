@@ -1,4 +1,4 @@
-package com.dji.FPVDemo.test;
+package com.dji.FPVDemo.test.bugly;
 
 import androidx.appcompat.app.AppCompatActivity;
 
