@@ -46,9 +46,6 @@ public class MApplication extends Application {
         sContext = getApplicationContext();
 
         initLogan();
-        Logan.w("MyApplication onCreate", 3);
-        Logan.w("MyApplication onCreate", 3);
-        Logan.w("MyApplication onCreate", 3);
         initBugly();
 
     }
