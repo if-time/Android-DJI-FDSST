@@ -96,6 +96,7 @@ public class MainActivity extends DJIMainActivity {
             public void confirmForTracking(RectF rectFForFrame) {
                 classifierFromTensorFlow.close();
                 trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
+                trackingForFDSST();
             }
         });
     }
