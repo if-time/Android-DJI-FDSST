@@ -3,7 +3,9 @@ package com.dji.FPVDemo.test.drawclickevents;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.dji.FPVDemo.R;
 
@@ -25,6 +27,7 @@ public class DrawSimpleCircleMainActivity extends AppCompatActivity {
         int height = metrics.heightPixels;
 
         setContentView(new MyCircleView(this, width, height));
+        Log.i("donguri", "onCreate: " +    Environment.getExternalStorageDirectory().getAbsolutePath() + "/result");
 //        setContentView(R.layout.activity_draw_simple_circle_main);
     }
 }

@@ -94,9 +94,11 @@ public class MainActivity extends DJIMainActivity {
         tracker.setConfirmLocationForTensorFlow(new ConfirmLocationForTensorFlow() {
             @Override
             public void confirmForTracking(RectF rectFForFrame) {
-                classifierFromTensorFlow.close();
                 trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
-                trackingForFDSST();
+//                initTrackingAlgorithm(rectFForFrame);
+//                trackingForFDSST();
+                trackerType = TrackerType.USE_FDSST;
+                classifierFromTensorFlow.close();
             }
         });
     }

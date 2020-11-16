@@ -58,7 +58,6 @@ public class MultiBoxTracker {
     private final float textSizePx;
     private final BorderedText borderedText;
     private ConfirmLocationForTensorFlow confirmLocationForTensorFlow;
-    private OverlayView ovTrackingOverlay;
     private Matrix frameToCanvasMatrix;
     private int frameWidth;
     private int frameHeight;
@@ -134,17 +133,6 @@ public class MultiBoxTracker {
                 break;
             }
         }
-        ovTrackingOverlay.setConfirmTouchForOverlayView(new ConfirmTouchForOverlayView() {
-            @Override
-            public void confirmForOverlayView(float x, float y) {
-                for (final TrackedRecognition recognition : trackedObjects) {
-                    final RectF trackedPos = new RectF(recognition.location);
-                    if (trackedPos.contains(x, y)) {
-                        confirmForTensorFlow(trackedPos);
-                    }
-                }
-            }
-        });
     }
 
     public synchronized void draw(final Canvas canvas) {
@@ -164,7 +152,18 @@ public class MultiBoxTracker {
     }
 
     public void inputTrackingOverlayObject(OverlayView ovTrackingOverlay) {
-        this.ovTrackingOverlay = ovTrackingOverlay;
+        ovTrackingOverlay.setConfirmTouchForOverlayView(new ConfirmTouchForOverlayView() {
+            @Override
+            public void confirmForOverlayView(float x, float y) {
+                for (final TrackedRecognition recognition : trackedObjects) {
+                    final RectF trackedPos = new RectF(recognition.location);
+                    if (trackedPos.contains(x, y)) {
+                        confirmForTensorFlow(trackedPos);
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     public void setConfirmLocationForTensorFlow(ConfirmLocationForTensorFlow confirmLocationForTensorFlow) {

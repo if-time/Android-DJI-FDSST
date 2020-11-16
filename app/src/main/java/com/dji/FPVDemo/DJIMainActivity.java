@@ -76,9 +76,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     // 虚拟摇杆默认是关闭的
     private boolean isSimulator = false;
 
-    private enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW}
+    public enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW}
 
-    private static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
+    public static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 
     private FlightController mFlightController;
 
@@ -503,35 +503,42 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             @Override
             public void confirmForTracking(final RectF rectFForFrame) {
                 // showToast("回调");
-                // 截取此区域的bitmap传入fdsst中
-                final Bitmap bitmapForTracking = tvVideoPreviewer.getBitmap();
-
-//                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
-
-                String titleList = "选择哪种跟踪算法？";
-                final String[] languanges = new String[]{"KCF", "FDSST"};
-                DialogFragmentHelper.showListDialog(DJIMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
-                    @Override
-                    public void onDataResult(Integer result) {
-                        CommonUtils.showToast(DJIMainActivity.this, languanges[result]);
-                        switch (result) {
-                            case 0:
-                                trackingInitForKCF(rectFForFrame, bitmapForTracking);
-                                trackerType = TrackerType.USE_KCF;
-                                break;
-                            case 1:
-                                trackingInitForFDSST(rectFForFrame, bitmapForTracking);
-                                trackerType = TrackerType.USE_FDSST;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }, true);
-
+                initTrackingAlgorithm(rectFForFrame);
             }
         });
 
+    }
+
+    /**
+     * 通过回调获得RectF坐标，进行跟踪算法初始化
+     * @param rectFForFrame
+     */
+    public void initTrackingAlgorithm(RectF rectFForFrame) {
+        // 截取此区域的bitmap传入fdsst中
+        final Bitmap bitmapForTracking = tvVideoPreviewer.getBitmap();
+
+//                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
+
+        String titleList = "选择哪种跟踪算法？";
+        final String[] languanges = new String[]{"KCF", "FDSST"};
+        DialogFragmentHelper.showListDialog(DJIMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
+            @Override
+            public void onDataResult(Integer result) {
+                CommonUtils.showToast(DJIMainActivity.this, languanges[result]);
+                switch (result) {
+                    case 0:
+                        trackingInitForKCF(rectFForFrame, bitmapForTracking);
+                        trackerType = TrackerType.USE_KCF;
+                        break;
+                    case 1:
+                        trackingInitForFDSST(rectFForFrame, bitmapForTracking);
+                        trackerType = TrackerType.USE_FDSST;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }, true);
     }
 
     @OnClick(R.id.btnThermalCamera)
