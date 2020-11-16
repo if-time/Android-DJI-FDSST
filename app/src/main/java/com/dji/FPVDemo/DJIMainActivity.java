@@ -108,7 +108,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     @BindView(R.id.ivImageViewForFrame)
     ImageView ivImageViewForFrame;
 
-    @BindView(R.id.tpvTouchFrame)
+//    @BindView(R.id.tpvTouchFrame)
     TouchFrameView tpvTouchFrame;
 
     @BindView(R.id.ovTrackingOverlay)
@@ -135,7 +135,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_video_feeder);
         ButterKnife.bind(this);
-
         initListener();
 
         // 注册无人机监听广播
@@ -158,42 +157,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 }
             }
         };
-
-        // 来自TouchPaintView
-        // 确定点击到了画框区域
-        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
-            @Override
-            public void confirmForTracking(final RectF rectFForFrame) {
-                // showToast("回调");
-                // 截取此区域的bitmap传入fdsst中
-                final Bitmap bitmapForTracking = tvVideoPreviewer.getBitmap();
-
-//                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
-
-                String titleList = "选择哪种跟踪算法？";
-                final String[] languanges = new String[]{"KCF", "FDSST"};
-                DialogFragmentHelper.showListDialog(DJIMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
-                    @Override
-                    public void onDataResult(Integer result) {
-                        CommonUtils.showToast(DJIMainActivity.this, languanges[result]);
-                        switch (result) {
-                            case 0:
-                                trackingInitForKCF(rectFForFrame, bitmapForTracking);
-                                trackerType = TrackerType.USE_KCF;
-                                break;
-                            case 1:
-                                trackingInitForFDSST(rectFForFrame, bitmapForTracking);
-                                trackerType = TrackerType.USE_FDSST;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }, true);
-
-            }
-        });
-
     }
 
     private void setThermalConfig() {
@@ -529,8 +492,45 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     public void addTouchFrameView(View view) {
         touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
 
+        tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
+
         llViewForFrameContainer.addView(touchFrameView,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // 来自TouchPaintView
+        // 确定点击到了画框区域
+        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
+            @Override
+            public void confirmForTracking(final RectF rectFForFrame) {
+                // showToast("回调");
+                // 截取此区域的bitmap传入fdsst中
+                final Bitmap bitmapForTracking = tvVideoPreviewer.getBitmap();
+
+//                DialogUtils.showListDialog(MainActivity.this, getSupportFragmentManager(),"选择哪种跟踪算法？",new String[]{"KCF", "FDSST"});
+
+                String titleList = "选择哪种跟踪算法？";
+                final String[] languanges = new String[]{"KCF", "FDSST"};
+                DialogFragmentHelper.showListDialog(DJIMainActivity.this, getSupportFragmentManager(), titleList, languanges, new IDialogResultListener<Integer>() {
+                    @Override
+                    public void onDataResult(Integer result) {
+                        CommonUtils.showToast(DJIMainActivity.this, languanges[result]);
+                        switch (result) {
+                            case 0:
+                                trackingInitForKCF(rectFForFrame, bitmapForTracking);
+                                trackerType = TrackerType.USE_KCF;
+                                break;
+                            case 1:
+                                trackingInitForFDSST(rectFForFrame, bitmapForTracking);
+                                trackerType = TrackerType.USE_FDSST;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }, true);
+
+            }
+        });
 
     }
 
@@ -549,7 +549,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             stopBackgroundThread();
         } else {
             startBackgroundThread();
-            tpvTouchFrame.clearView();
+//            tpvTouchFrame.clearView();
         }
     }
 
