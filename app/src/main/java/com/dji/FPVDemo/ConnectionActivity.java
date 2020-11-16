@@ -20,8 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.dji.FPVDemo.test.drawclickevents.DrawSimpleCircleMainActivity;
-import com.dji.FPVDemo.test.logan.LoganMainActivity;
+import com.dji.FPVDemo.test.RecyclerViewMainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -289,7 +288,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                 break;
             }
             case R.id.btnTest: {
-                Intent intent = new Intent(this, DrawSimpleCircleMainActivity.class);
+                Intent intent = new Intent(this, RecyclerViewMainActivity.class);
                 startActivity(intent);
                 break;
             }
