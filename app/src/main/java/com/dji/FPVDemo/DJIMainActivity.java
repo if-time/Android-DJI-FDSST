@@ -72,7 +72,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
 
-    private boolean runDetection = false;
+    private boolean runTracking = false;
+    private boolean runDetectionForTensorFlow = false;
     // 虚拟摇杆默认是关闭的
     private boolean isSimulator = false;
 
@@ -87,10 +88,15 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     protected DJICodecManager mCodecManager = null;
     private Camera mCamera;
 
-    private HandlerThread backgroundThread;
-    private Handler backgroundHandler;
+    private HandlerThread backgroundThreadForTracking;
+    private Handler backgroundHandlerForTracking;
 
-    private final Object lock = new Object();
+    private final Object lockForTracking = new Object();
+
+    private HandlerThread backgroundThreadForTensorFlow;
+    private Handler backgroundHandlerForTensorFlow;
+
+    private final Object lockForTensorFlow = new Object();
 
     private View touchFrameView;
 
@@ -200,7 +206,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     @Override
     public void onPause() {
         uninitPreviewer();
-        stopBackgroundThread();
+        stopBackgroundThreadForTracking();
         super.onPause();
     }
 
@@ -288,29 +294,29 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     /**
      * 启动后台线程
      */
-    private void startBackgroundThread() {
-        backgroundThread = new HandlerThread(HANDLE_THREAD_NAME);
-        backgroundThread.start();
-        backgroundHandler = new Handler(backgroundThread.getLooper());
-        synchronized (lock) {
-            runDetection = true;
+    public void startBackgroundThreadForTensorFlow() {
+        backgroundThreadForTensorFlow = new HandlerThread(HANDLE_THREAD_NAME);
+        backgroundThreadForTensorFlow.start();
+        backgroundHandlerForTensorFlow = new Handler(backgroundThreadForTensorFlow.getLooper());
+        synchronized (lockForTensorFlow) {
+            runDetectionForTensorFlow = true;
         }
-        backgroundHandler.post(periodicDetection);
+        backgroundHandlerForTensorFlow.post(periodicDetectionForTensorFlow);
     }
 
     /**
      * 停止后台线程
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void stopBackgroundThread() {
-        if (backgroundThread != null) {
-            backgroundThread.quitSafely();
+    public void stopBackgroundThreadForTensorFlow() {
+        if (backgroundThreadForTensorFlow != null) {
+            backgroundThreadForTensorFlow.quitSafely();
             try {
-                backgroundThread.join();
-                backgroundThread = null;
-                backgroundHandler = null;
-                synchronized (lock) {
-                    runDetection = false;
+                backgroundThreadForTensorFlow.join();
+                backgroundThreadForTensorFlow = null;
+                backgroundHandlerForTensorFlow = null;
+                synchronized (lockForTensorFlow) {
+                    runDetectionForTensorFlow = false;
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -321,22 +327,77 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     /**
      * 识别任务
      */
-    private Runnable periodicDetection = new Runnable() {
+    private Runnable periodicDetectionForTensorFlow = new Runnable() {
         @Override
         public void run() {
-            synchronized (lock) {
-                if (runDetection) {
-                    classifyFrame();
+            synchronized (lockForTensorFlow) {
+                if (runDetectionForTensorFlow) {
+                    classifyFrameForTensorFlow();
                 }
             }
-            backgroundHandler.post(periodicDetection);
+            backgroundHandlerForTensorFlow.post(periodicDetectionForTensorFlow);
         }
     };
 
     /**
      * 识别
      */
-    private void classifyFrame() {
+    private void classifyFrameForTensorFlow() {
+        detectionForTensorFlow();
+    }
+
+    /**
+     * 启动后台线程
+     */
+    public void startBackgroundThreadForTracking() {
+        backgroundThreadForTracking = new HandlerThread(HANDLE_THREAD_NAME);
+        backgroundThreadForTracking.start();
+        backgroundHandlerForTracking = new Handler(backgroundThreadForTracking.getLooper());
+        synchronized (lockForTracking) {
+            runTracking = true;
+        }
+        backgroundHandlerForTracking.post(periodicDetectionForTracking);
+    }
+
+    /**
+     * 停止后台线程
+     */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void stopBackgroundThreadForTracking() {
+        if (backgroundThreadForTracking != null) {
+            backgroundThreadForTracking.quitSafely();
+            try {
+                backgroundThreadForTracking.join();
+                backgroundThreadForTracking = null;
+                backgroundHandlerForTracking = null;
+                synchronized (lockForTracking) {
+                    runTracking = false;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 识别任务
+     */
+    private Runnable periodicDetectionForTracking = new Runnable() {
+        @Override
+        public void run() {
+            synchronized (lockForTracking) {
+                if (runTracking) {
+                    frameForTracking();
+                }
+            }
+            backgroundHandlerForTracking.post(periodicDetectionForTracking);
+        }
+    };
+
+    /**
+     * 识别
+     */
+    private void frameForTracking() {
         switch (trackerType) {
             case USE_KCF:
                 trackingForKCF();
@@ -552,10 +613,10 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      */
     @OnClick(R.id.btnBackgroundThread)
     public void clickBtnBackgroundThread() {
-        if (runDetection) {
-            stopBackgroundThread();
+        if (runDetectionForTensorFlow) {
+            stopBackgroundThreadForTensorFlow();
         } else {
-            startBackgroundThread();
+            startBackgroundThreadForTensorFlow();
 //            tpvTouchFrame.clearView();
         }
     }
