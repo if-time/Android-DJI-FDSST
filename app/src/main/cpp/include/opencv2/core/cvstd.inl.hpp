@@ -77,8 +77,11 @@ inline
 String::String(const std::string& str)
     : cstr_(0), len_(0)
 {
-    size_t len = str.size();
-    if (len) memcpy(allocate(len), str.c_str(), len);
+    if (!str.empty())
+    {
+        size_t len = str.size();
+        memcpy(allocate(len), str.c_str(), len);
+    }
 }
 
 inline
@@ -96,8 +99,11 @@ inline
 String& String::operator = (const std::string& str)
 {
     deallocate();
-    size_t len = str.size();
-    if (len) memcpy(allocate(len), str.c_str(), len);
+    if (!str.empty())
+    {
+        size_t len = str.size();
+        memcpy(allocate(len), str.c_str(), len);
+    }
     return *this;
 }
 
@@ -120,8 +126,8 @@ String operator + (const String& lhs, const std::string& rhs)
     String s;
     size_t rhslen = rhs.size();
     s.allocate(lhs.len_ + rhslen);
-    if (lhs.len_) memcpy(s.cstr_, lhs.cstr_, lhs.len_);
-    if (rhslen) memcpy(s.cstr_ + lhs.len_, rhs.c_str(), rhslen);
+    memcpy(s.cstr_, lhs.cstr_, lhs.len_);
+    memcpy(s.cstr_ + lhs.len_, rhs.c_str(), rhslen);
     return s;
 }
 
@@ -131,8 +137,8 @@ String operator + (const std::string& lhs, const String& rhs)
     String s;
     size_t lhslen = lhs.size();
     s.allocate(lhslen + rhs.len_);
-    if (lhslen) memcpy(s.cstr_, lhs.c_str(), lhslen);
-    if (rhs.len_) memcpy(s.cstr_ + lhslen, rhs.cstr_, rhs.len_);
+    memcpy(s.cstr_, lhs.c_str(), lhslen);
+    memcpy(s.cstr_ + lhslen, rhs.cstr_, rhs.len_);
     return s;
 }
 
@@ -227,7 +233,7 @@ template<typename _Tp, int n> static inline
 std::ostream& operator << (std::ostream& out, const Vec<_Tp, n>& vec)
 {
     out << "[";
-    if (cv::traits::Depth<_Tp>::value <= CV_32S)
+    if(Vec<_Tp, n>::depth < CV_32F)
     {
         for (int i = 0; i < n - 1; ++i) {
             out << (int)vec[i] << ", ";
@@ -259,10 +265,10 @@ std::ostream& operator << (std::ostream& out, const Rect_<_Tp>& rect)
 
 static inline std::ostream& operator << (std::ostream& out, const MatSize& msize)
 {
-    int i, dims = msize.dims();
+    int i, dims = msize.p[-1];
     for( i = 0; i < dims; i++ )
     {
-        out << msize[i];
+        out << msize.p[i];
         if( i < dims-1 )
             out << " x ";
     }

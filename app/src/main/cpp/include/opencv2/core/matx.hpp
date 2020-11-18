@@ -66,14 +66,13 @@ namespace cv
 ////////////////////////////// Small Matrix ///////////////////////////
 
 //! @cond IGNORED
-// FIXIT Remove this (especially CV_EXPORTS modifier)
-struct CV_EXPORTS Matx_AddOp { Matx_AddOp() {} Matx_AddOp(const Matx_AddOp&) {} };
-struct CV_EXPORTS Matx_SubOp { Matx_SubOp() {} Matx_SubOp(const Matx_SubOp&) {} };
-struct CV_EXPORTS Matx_ScaleOp { Matx_ScaleOp() {} Matx_ScaleOp(const Matx_ScaleOp&) {} };
-struct CV_EXPORTS Matx_MulOp { Matx_MulOp() {} Matx_MulOp(const Matx_MulOp&) {} };
-struct CV_EXPORTS Matx_DivOp { Matx_DivOp() {} Matx_DivOp(const Matx_DivOp&) {} };
-struct CV_EXPORTS Matx_MatMulOp { Matx_MatMulOp() {} Matx_MatMulOp(const Matx_MatMulOp&) {} };
-struct CV_EXPORTS Matx_TOp { Matx_TOp() {} Matx_TOp(const Matx_TOp&) {} };
+struct CV_EXPORTS Matx_AddOp {};
+struct CV_EXPORTS Matx_SubOp {};
+struct CV_EXPORTS Matx_ScaleOp {};
+struct CV_EXPORTS Matx_MulOp {};
+struct CV_EXPORTS Matx_DivOp {};
+struct CV_EXPORTS Matx_MatMulOp {};
+struct CV_EXPORTS Matx_TOp {};
 //! @endcond
 
 /** @brief Template class for small matrices whose type and size are known at compilation time
@@ -93,7 +92,7 @@ Except of the plain constructor which takes a list of elements, Matx can be init
     float values[] = { 1, 2, 3};
     Matx31f m(values);
 @endcode
-In case if C++11 features are available, std::initializer_list can be also used to initialize Matx:
+In case if C++11 features are avaliable, std::initializer_list can be also used to initizlize Matx:
 @code{.cpp}
     Matx31f m = { 1, 2, 3};
 @endcode
@@ -101,14 +100,11 @@ In case if C++11 features are available, std::initializer_list can be also used 
 template<typename _Tp, int m, int n> class Matx
 {
 public:
-    enum {
+    enum { depth    = DataType<_Tp>::depth,
            rows     = m,
            cols     = n,
            channels = rows*cols,
-#ifdef OPENCV_TRAITS_ENABLE_DEPRECATED
-           depth    = traits::Type<_Tp>::value,
            type     = CV_MAKETYPE(depth, channels),
-#endif
            shortdim = (m < n ? m : n)
          };
 
@@ -119,7 +115,7 @@ public:
     //! default constructor
     Matx();
 
-    explicit Matx(_Tp v0); //!< 1x1 matrix
+    Matx(_Tp v0); //!< 1x1 matrix
     Matx(_Tp v0, _Tp v1); //!< 1x2 or 2x1 matrix
     Matx(_Tp v0, _Tp v1, _Tp v2); //!< 1x3 or 3x1 matrix
     Matx(_Tp v0, _Tp v1, _Tp v2, _Tp v3); //!< 1x4, 2x2 or 4x1 matrix
@@ -263,22 +259,12 @@ public:
     typedef value_type                                    vec_type;
 
     enum { generic_type = 0,
+           depth        = DataType<channel_type>::depth,
            channels     = m * n,
-           fmt          = traits::SafeFmt<channel_type>::fmt + ((channels - 1) << 8)
-#ifdef OPENCV_TRAITS_ENABLE_DEPRECATED
-           ,depth        = DataType<channel_type>::depth
-           ,type         = CV_MAKETYPE(depth, channels)
-#endif
+           fmt          = DataType<channel_type>::fmt + ((channels - 1) << 8),
+           type         = CV_MAKETYPE(depth, channels)
          };
 };
-
-namespace traits {
-template<typename _Tp, int m, int n>
-struct Depth< Matx<_Tp, m, n> > { enum { value = Depth<_Tp>::value }; };
-template<typename _Tp, int m, int n>
-struct Type< Matx<_Tp, m, n> > { enum { value = CV_MAKETYPE(Depth<_Tp>::value, n*m) }; };
-} // namespace
-
 
 /** @brief  Comma-separated Matrix Initializer
 */
@@ -337,13 +323,9 @@ template<typename _Tp, int cn> class Vec : public Matx<_Tp, cn, 1>
 {
 public:
     typedef _Tp value_type;
-    enum {
+    enum { depth    = Matx<_Tp, cn, 1>::depth,
            channels = cn,
-#ifdef OPENCV_TRAITS_ENABLE_DEPRECATED
-           depth    = Matx<_Tp, cn, 1>::depth,
-           type     = CV_MAKETYPE(depth, channels),
-#endif
-           _dummy_enum_finalizer = 0
+           type     = CV_MAKETYPE(depth, channels)
          };
 
     //! default constructor
@@ -440,23 +422,12 @@ public:
     typedef value_type                                 vec_type;
 
     enum { generic_type = 0,
+           depth        = DataType<channel_type>::depth,
            channels     = cn,
            fmt          = DataType<channel_type>::fmt + ((channels - 1) << 8),
-#ifdef OPENCV_TRAITS_ENABLE_DEPRECATED
-           depth        = DataType<channel_type>::depth,
-           type         = CV_MAKETYPE(depth, channels),
-#endif
-           _dummy_enum_finalizer = 0
+           type         = CV_MAKETYPE(depth, channels)
          };
 };
-
-namespace traits {
-template<typename _Tp, int cn>
-struct Depth< Vec<_Tp, cn> > { enum { value = Depth<_Tp>::value }; };
-template<typename _Tp, int cn>
-struct Type< Vec<_Tp, cn> > { enum { value = CV_MAKETYPE(Depth<_Tp>::value, cn) }; };
-} // namespace
-
 
 /** @brief  Comma-separated Vec Initializer
 */

@@ -24,7 +24,10 @@ ANDROID_ARM_NEON:UNINITIALIZED=TRUE
 ANDROID_NDK:UNINITIALIZED=C:\Users\Dong\AppData\Local\Android\Sdk\ndk\16.1.4479499
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-21
+ANDROID_PLATFORM:UNINITIALIZED=android-24
+
+//No help, variable specified on the command line.
+ANDROID_STL:UNINITIALIZED=c++_shared
 
 //No help, variable specified on the command line.
 ANDROID_TOOLCHAIN:UNINITIALIZED=clang
@@ -58,7 +61,7 @@ CMAKE_CXX_COMPILER_AR:FILEPATH=CMAKE_CXX_COMPILER_AR-NOTFOUND
 CMAKE_CXX_COMPILER_RANLIB:FILEPATH=CMAKE_CXX_COMPILER_RANLIB-NOTFOUND
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=-std=c++14
+CMAKE_CXX_FLAGS:STRING=-std=c++14 -fopenmp
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -74,7 +77,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //Libraries linked by default with all C++ applications.
-CMAKE_CXX_STANDARD_LIBRARIES:STRING=-latomic -lm "C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/libgnustl_static.a"
+CMAKE_CXX_STANDARD_LIBRARIES:STRING=-latomic -lm "C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++.so"
 
 //LLVM archiver
 CMAKE_C_COMPILER_AR:FILEPATH=CMAKE_C_COMPILER_AR-NOTFOUND
@@ -207,8 +210,8 @@ CMAKE_SYSTEM_NAME:UNINITIALIZED=Android
 //No help, variable specified on the command line.
 CMAKE_SYSTEM_VERSION:UNINITIALIZED=21
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/build/cmake/android.toolchain.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=C:\Users\Dong\AppData\Local\Android\Sdk\ndk\16.1.4479499\build\cmake\android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -223,10 +226,13 @@ Project_BINARY_DIR:STATIC=C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FD
 Project_SOURCE_DIR:STATIC=C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp
 
 //Path to a library.
-log-lib:FILEPATH=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-21/arch-arm64/usr/lib/liblog.so
+android-lib:FILEPATH=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-24/arch-arm64/usr/lib/libandroid.so
+
+//Path to a library.
+log-lib:FILEPATH=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-24/arch-arm64/usr/lib/liblog.so
 
 //Dependencies for the target
-native-lib_LIB_DEPENDS:STATIC=general;jnigraphics;general;C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-21/arch-arm64/usr/lib/liblog.so;general;opencv_java3;
+native-lib_LIB_DEPENDS:STATIC=general;jnigraphics;general;libopencv_java4;general;C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-24/arch-arm64/usr/lib/liblog.so;general;vulkan;general;C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/platforms/android-24/arch-arm64/usr/lib/libandroid.so;general;ncnn;general;glslang;general;SPIRV;general;OGLCompiler;general;OSDependent;
 
 
 ########################

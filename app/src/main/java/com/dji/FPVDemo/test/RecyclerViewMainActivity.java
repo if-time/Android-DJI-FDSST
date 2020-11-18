@@ -14,6 +14,8 @@ import com.dji.FPVDemo.test.drawerlayout.DrawerLayoutActivity;
 import com.dji.FPVDemo.test.drawerlayout.DrawerlayoutNaviMainActivity;
 import com.dji.FPVDemo.test.imageopencv.PictureConversionTestActivity;
 import com.dji.FPVDemo.test.logan.LoganMainActivity;
+import com.dji.FPVDemo.test.ncnnvulkan.camera2.CameraMainActivity;
+import com.dji.FPVDemo.test.ncnnvulkan.WelcomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,14 @@ public class RecyclerViewMainActivity extends AppCompatActivity {
                         Intent drawerlayoutIntent = new Intent(RecyclerViewMainActivity.this, DrawerLayoutActivity.class);
                         startActivity(drawerlayoutIntent);
                         break;
+                    case 6:
+                        Intent ncnnVulkanIntent = new Intent(RecyclerViewMainActivity.this, WelcomeActivity.class);
+                        startActivity(ncnnVulkanIntent);
+                        break;
+                    case 7:
+                        Intent cameraMainIntent = new Intent(RecyclerViewMainActivity.this, CameraMainActivity.class);
+                        startActivity(cameraMainIntent);
+                        break;
                     default:
                         break;
                 }
@@ -97,6 +107,12 @@ public class RecyclerViewMainActivity extends AppCompatActivity {
 
         String drawerlayoutString = "DrawerlayoutActivity";
         buttonList.add(drawerlayoutString);
+
+        String ncnnVulkanString = "NcnnVulkanMainActivity";
+        buttonList.add(ncnnVulkanString);
+
+        String cameraMainString = "CameraMainActivity";
+        buttonList.add(cameraMainString);
 
     }
 }

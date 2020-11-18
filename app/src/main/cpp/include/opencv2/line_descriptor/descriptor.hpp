@@ -99,73 +99,73 @@ Apart from fields inspired to KeyPoint class, KeyLines stores information about 
 original image and in octave it was extracted from, about line's length and number of pixels it
 covers.
  */
-struct CV_EXPORTS_W_SIMPLE KeyLine
+struct CV_EXPORTS KeyLine
 {
  public:
   /** orientation of the line */
-  CV_PROP_RW float angle;
+  float angle;
 
   /** object ID, that can be used to cluster keylines by the line they represent */
-  CV_PROP_RW int class_id;
+  int class_id;
 
   /** octave (pyramid layer), from which the keyline has been extracted */
-  CV_PROP_RW int octave;
+  int octave;
 
   /** coordinates of the middlepoint */
-  CV_PROP_RW Point2f pt;
+  Point2f pt;
 
   /** the response, by which the strongest keylines have been selected.
    It's represented by the ratio between line's length and maximum between
    image's width and height */
-  CV_PROP_RW float response;
+  float response;
 
   /** minimum area containing line */
-  CV_PROP_RW float size;
+  float size;
 
   /** lines's extremes in original image */
-  CV_PROP_RW float startPointX;
-  CV_PROP_RW float startPointY;
-  CV_PROP_RW float endPointX;
-  CV_PROP_RW float endPointY;
+  float startPointX;
+  float startPointY;
+  float endPointX;
+  float endPointY;
 
   /** line's extremes in image it was extracted from */
-  CV_PROP_RW float sPointInOctaveX;
-  CV_PROP_RW float sPointInOctaveY;
-  CV_PROP_RW float ePointInOctaveX;
-  CV_PROP_RW float ePointInOctaveY;
+  float sPointInOctaveX;
+  float sPointInOctaveY;
+  float ePointInOctaveX;
+  float ePointInOctaveY;
 
   /** the length of line */
-  CV_PROP_RW float lineLength;
+  float lineLength;
 
   /** number of pixels covered by the line */
-  CV_PROP_RW int numOfPixels;
+  int numOfPixels;
 
   /** Returns the start point of the line in the original image */
-  CV_WRAP Point2f getStartPoint() const
+  Point2f getStartPoint() const
   {
     return Point2f(startPointX, startPointY);
   }
 
   /** Returns the end point of the line in the original image */
-  CV_WRAP Point2f getEndPoint() const
+  Point2f getEndPoint() const
   {
     return Point2f(endPointX, endPointY);
   }
 
   /** Returns the start point of the line in the octave it was extracted from */
-  CV_WRAP Point2f getStartPointInOctave() const
+  Point2f getStartPointInOctave() const
   {
     return Point2f(sPointInOctaveX, sPointInOctaveY);
   }
 
   /** Returns the end point of the line in the octave it was extracted from */
-  CV_WRAP Point2f getEndPointInOctave() const
+  Point2f getEndPointInOctave() const
   {
     return Point2f(ePointInOctaveX, ePointInOctaveY);
   }
 
   /** constructor */
-  CV_WRAP KeyLine()
+  KeyLine()
   {
   }
 };
@@ -253,13 +253,13 @@ class CV_EXPORTS BinaryDescriptor : public Algorithm
 
     @param fn source FileNode file
      */
-  virtual void read( const cv::FileNode& fn ) CV_OVERRIDE;
+  virtual void read( const cv::FileNode& fn );
 
   /** @brief Store parameters to a FileStorage object
 
     @param fs output FileStorage file
      */
-  virtual void write( cv::FileStorage& fs ) const CV_OVERRIDE;
+  virtual void write( cv::FileStorage& fs ) const;
 
   /** @brief Requires line detection
 
@@ -401,12 +401,6 @@ class CV_EXPORTS BinaryDescriptor : public Algorithm
     unsigned int octaveCount;
     //the decriptor of line
     std::vector<float> descriptor;
-
-    OctaveSingleLine() : startPointX(0), startPointY(0), endPointX(0), endPointY(0),
-        sPointInOctaveX(0), sPointInOctaveY(0), ePointInOctaveX(0), ePointInOctaveY(0),
-        direction(0), salience(0), lineLength(0), numOfPixels(0), octaveCount(0),
-        descriptor(std::vector<float>())
-    {}
   };
 
   struct Pixel
@@ -892,7 +886,7 @@ the one used in *BinaryDescriptor* class, data associated to a line's extremes i
 in octave it was extracted from, coincide. KeyLine's field *class_id* is used as an index to
 indicate the order of extraction of a line inside a single octave.
 */
-class CV_EXPORTS_W LSDDetector : public Algorithm
+class CV_EXPORTS LSDDetector : public Algorithm
 {
 public:
 
@@ -905,7 +899,7 @@ LSDDetector()
 
 /** @brief Creates ad LSDDetector object, using smart pointers.
  */
-CV_WRAP static Ptr<LSDDetector> createLSDDetector();
+static Ptr<LSDDetector> createLSDDetector();
 
 /** @brief Detect lines inside an image.
 
@@ -915,7 +909,7 @@ CV_WRAP static Ptr<LSDDetector> createLSDDetector();
 @param numOctaves number of octaves inside pyramid
 @param mask mask matrix to detect only KeyLines of interest
  */
-CV_WRAP void detect( const Mat& image, CV_OUT std::vector<KeyLine>& keypoints, int scale, int numOctaves, const Mat& mask = Mat() );
+void detect( const Mat& image, CV_OUT std::vector<KeyLine>& keypoints, int scale, int numOctaves, const Mat& mask = Mat() );
 
 /** @overload
 @param images input images
@@ -924,7 +918,7 @@ CV_WRAP void detect( const Mat& image, CV_OUT std::vector<KeyLine>& keypoints, i
 @param numOctaves number of octaves inside pyramid
 @param masks vector of mask matrices to detect only KeyLines of interest from each input image
 */
-CV_WRAP void detect( const std::vector<Mat>& images, std::vector<std::vector<KeyLine> >& keylines, int scale, int numOctaves,
+void detect( const std::vector<Mat>& images, std::vector<std::vector<KeyLine> >& keylines, int scale, int numOctaves,
 const std::vector<Mat>& masks = std::vector<Mat>() ) const;
 
 private:
@@ -1076,7 +1070,7 @@ static Ptr<BinaryDescriptorMatcher> createBinaryDescriptorMatcher();
 
 /** @brief Clear dataset and internal data
  */
-void clear() CV_OVERRIDE;
+void clear();
 
 /** @brief Constructor.
 

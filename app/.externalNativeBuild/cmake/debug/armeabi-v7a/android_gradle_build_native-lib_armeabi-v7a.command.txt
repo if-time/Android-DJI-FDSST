@@ -1,0 +1,8 @@
+Executable : C:\Users\Dong\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\cmake.exe
+arguments : 
+--build
+C:\Users\Dong\Desktop\GraduationProject\Android-DJI-FDSST\app\.externalNativeBuild\cmake\debug\armeabi-v7a
+--target
+native-lib
+jvmArgs : 
+

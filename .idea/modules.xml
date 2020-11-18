@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Android-DJI-FDSST.iml" filepath="$PROJECT_DIR$/.idea/modules/Android-DJI-FDSST.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-DJI-FDSST.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-DJI-FDSST.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/opcv430android/Android-DJI-FDSST.opcv430android.iml" filepath="$PROJECT_DIR$/.idea/modules/opcv430android/Android-DJI-FDSST.opcv430android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/openCVLibrary330/Android-DJI-FDSST.openCVLibrary330.iml" filepath="$PROJECT_DIR$/.idea/modules/openCVLibrary330/Android-DJI-FDSST.openCVLibrary330.iml" />
     </modules>
   </component>
 </project>

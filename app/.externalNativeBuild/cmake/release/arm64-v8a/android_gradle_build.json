@@ -1,7 +1,7 @@
 {
   "stringTable": {
     "0": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/.externalNativeBuild/cmake/release/arm64-v8a",
-    "1": "--target=aarch64-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/libs/arm64-v8a/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/gnu-libstdc++/4.9/include/backward -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=21 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security -std=c++14 -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O2 -DNDEBUG -fPIC"
+    "1": "--target=aarch64-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/aarch64-linux-android-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot -Dnative_lib_EXPORTS -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/fdsst -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/include/opencv2 -IC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/ncnnvulkan/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/android/support/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++abi/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot/usr/include/aarch64-linux-android -D__ANDROID_API__=24 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11 -std=c++14 -fopenmp -LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/arm64-v8a -O2 -DNDEBUG -fPIC"
   },
   "buildFiles": [
     "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\build\\cmake\\android.toolchain.cmake",
@@ -32,9 +32,28 @@
           "src": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\fdsst\\fhog.cpp",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\YoloV4.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\YoloV5.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
         }
       ],
-      "headers": [],
+      "headers": [
+        {
+          "header": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\YoloV4.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\src\\main\\cpp\\YoloV5.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
       "output": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\\libnative-lib.so"
     }
   },

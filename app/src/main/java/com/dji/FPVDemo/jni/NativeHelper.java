@@ -1,6 +1,10 @@
 package com.dji.FPVDemo.jni;
 
 
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+
+import com.dji.FPVDemo.ncnn.Box;
 import com.dji.FPVDemo.tracking.KCFResultFormJNI;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
 
@@ -45,6 +49,11 @@ public class NativeHelper {
     public native FDSSTResultFormJNI usingFdsst(Object srcBitmap, int width, int height);
 
     /**********************************************FDSST*****************************************************/
+
+    /**********************************************NCNN*****************************************************/
+    public static native void initNcnn(AssetManager manager, boolean v4tiny, boolean useGPU);
+    public static native Box[] detectForNcnn(Bitmap bitmap);
+    /**********************************************NCNN*****************************************************/
 
     public interface NativeDataListener {
         /**

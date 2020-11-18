@@ -32,11 +32,7 @@
 #if !defined _MSC_VER && !defined __BORLANDC__
 #  if defined __cplusplus && __cplusplus >= 201103L && !defined __APPLE__
 #    include <cstdint>
-#    ifdef __NEWLIB__
-        typedef unsigned int uint;
-#    else
-        typedef std::uint32_t uint;
-#    endif
+     typedef std::uint32_t uint;
 #  else
 #    include <stdint.h>
      typedef uint32_t uint;

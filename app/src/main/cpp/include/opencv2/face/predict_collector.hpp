@@ -98,9 +98,9 @@ public:
     */
     StandardCollector(double threshold_ = DBL_MAX);
     /** @brief overloaded interface method */
-    void init(size_t size) CV_OVERRIDE;
+    void init(size_t size);
     /** @brief overloaded interface method */
-    bool collect(int label, double dist) CV_OVERRIDE;
+    bool collect(int label, double dist);
     /** @brief Returns label with minimal distance */
     CV_WRAP int getMinLabel() const;
     /** @brief Returns minimal distance value */

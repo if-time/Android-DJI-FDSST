@@ -1,7 +1,0 @@
-[
-{
-  "directory": "C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/opcv430android/.externalNativeBuild/cmake/debug/x86",
-  "command": "C:\\Users\\Dong\\AppData\\Local\\Android\\Sdk\\ndk\\16.1.4479499\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android --gcc-toolchain=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/toolchains/x86-4.9/prebuilt/windows-x86_64 --sysroot=C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot   -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/android/support/include -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sources/cxx-stl/llvm-libc++abi/include  -isystem C:/Users/Dong/AppData/Local/Android/Sdk/ndk/16.1.4479499/sysroot/usr/include/i686-linux-android -D__ANDROID_API__=19 -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -Wa,--noexecstack -Wformat -Werror=format-security -std=c++11  -O0 -fno-limit-debug-info  -fPIC   -o CMakeFiles\\opencv_jni_shared.dir\\dummy.cpp.o -c C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\dummy.cpp",
-  "file": "C:\\Users\\Dong\\Desktop\\GraduationProject\\Android-DJI-FDSST\\opcv430android\\libcxx_helper\\dummy.cpp"
-}
-]

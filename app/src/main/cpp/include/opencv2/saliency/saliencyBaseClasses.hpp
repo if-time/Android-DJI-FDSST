@@ -68,12 +68,23 @@ class CV_EXPORTS_W Saliency : public virtual Algorithm
   virtual ~Saliency();
 
   /**
+   * \brief Create Saliency by saliency type.
+   */
+  static Ptr<Saliency> create( const String& saliencyType );
+
+  /**
    * \brief Compute the saliency
    * \param image        The image.
    * \param saliencyMap      The computed saliency map.
    * \return true if the saliency map is computed, false otherwise
    */
   CV_WRAP bool computeSaliency( InputArray image, OutputArray saliencyMap );
+
+  /**
+   * \brief Get the name of the specific saliency type
+   * \return The name of the tracker initializer
+   */
+  CV_WRAP String getClassName() const;
 
  protected:
 
@@ -93,7 +104,7 @@ class CV_EXPORTS_W StaticSaliency : public virtual Saliency
     targets, a segmentation by clustering is performed, using *K-means algorithm*. Then, to gain a
     binary representation of clustered saliency map, since values of the map can vary according to
     the characteristics of frame under analysis, it is not convenient to use a fixed threshold. So,
-    *Otsu's algorithm* is used, which assumes that the image to be thresholded contains two classes
+    *Otsu’s algorithm* is used, which assumes that the image to be thresholded contains two classes
     of pixels or bi-modal histograms (e.g. foreground and back-ground pixels); later on, the
     algorithm calculates the optimal threshold separating those two classes, so that their
     intra-class variance is minimal.
@@ -103,7 +114,7 @@ class CV_EXPORTS_W StaticSaliency : public virtual Saliency
      */
   CV_WRAP bool computeBinaryMap( InputArray _saliencyMap, OutputArray _binaryMap );
  protected:
-  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap ) CV_OVERRIDE = 0;
+  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap )=0;
 
 };
 
@@ -112,7 +123,7 @@ class CV_EXPORTS_W MotionSaliency : public virtual Saliency
 {
 
  protected:
-  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap ) CV_OVERRIDE = 0;
+  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap )=0;
 
 };
 
@@ -121,7 +132,7 @@ class CV_EXPORTS_W Objectness : public virtual Saliency
 {
 
  protected:
-  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap ) CV_OVERRIDE = 0;
+  virtual bool computeSaliencyImpl( InputArray image, OutputArray saliencyMap )=0;
 
 };
 

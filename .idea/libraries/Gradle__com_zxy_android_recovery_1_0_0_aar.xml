@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Gradle: com.zxy.android:recovery:1.0.0@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5c887f5c3017cd83aef0cba9d767ba3/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5c887f5c3017cd83aef0cba9d767ba3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5c887f5c3017cd83aef0cba9d767ba3/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5c887f5c3017cd83aef0cba9d767ba3/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.zxy.android/recovery/1.0.0/fe47aef442bab313c9813ffe7b4b3fcb7693aa70/recovery-1.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.zxy.android/recovery/1.0.0/56862f2a4909eb4fd2a5e93981e8efe230f3b28/recovery-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
