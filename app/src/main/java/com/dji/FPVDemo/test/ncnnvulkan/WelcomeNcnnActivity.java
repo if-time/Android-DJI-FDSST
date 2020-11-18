@@ -20,7 +20,7 @@ import com.dji.FPVDemo.R;
  * @date 2020/11/17 17:11
  */
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeNcnnActivity extends AppCompatActivity {
 
     private ToggleButton tbUseGpu;
 
@@ -31,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.activity_welcome_ncnn);
 
         tbUseGpu = findViewById(R.id.tbUseGpu);
         tbUseGpu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -41,7 +41,7 @@ public class WelcomeActivity extends AppCompatActivity {
 //                NcnnMainActivity.USE_GPU = useGPU;
 
                 if (useGPU) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeNcnnActivity.this);
                     builder.setTitle("Warning");
                     builder.setMessage("If the GPU is too old, it may not work well in GPU mode.");
                     builder.setCancelable(true);
@@ -49,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    Toast.makeText(WelcomeActivity.this, "CPU mode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WelcomeNcnnActivity.this, "CPU mode", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -58,8 +58,8 @@ public class WelcomeActivity extends AppCompatActivity {
         btnYolov4Tiny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WelcomeActivity.this, NcnnMainActivity.class);
-                WelcomeActivity.this.startActivity(intent);
+                Intent intent = new Intent(WelcomeNcnnActivity.this, NcnnMainActivity.class);
+                WelcomeNcnnActivity.this.startActivity(intent);
             }
         });
     }

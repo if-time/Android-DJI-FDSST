@@ -1,3 +1,1 @@
-[1/2] Building CXX object CMakeFiles/native-lib.dir/native-lib.cpp.o
-clang++.exe: warning: argument unused during compilation: '-LC:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/src/main/cpp/../jniLibs/armeabi-v7a' [-Wunused-command-line-argument]
-[2/2] Linking CXX shared library C:\Users\Dong\Desktop\GraduationProject\Android-DJI-FDSST\app\build\intermediates\cmake\debug\obj\armeabi-v7a\libnative-lib.so
+ninja: no work to do.

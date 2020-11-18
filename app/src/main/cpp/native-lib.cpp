@@ -7,13 +7,23 @@
 
 #include <android/bitmap.h>
 #include <android/log.h>
-#include <opencv2/video/tracking.hpp>
-#include <opencv2/tracking/tracker.hpp>
-#include <opencv2/opencv.hpp>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "trackingTargetForFDSST.cpp"
+
+#include <opencv2/imgproc.hpp>
+#include "opencv2/core.hpp"
+#include <opencv2/video/tracking.hpp>
+#include <opencv2/tracking/tracker.hpp>
+#include <opencv2/opencv.hpp>
+#include "opencv2/stitching.hpp"
+#include "opencv2/imgcodecs.hpp"
+
+#include <ncnn/gpu.h>
+#include <android/asset_manager_jni.h>
+#include <fdssttracker.hpp>
+#include "YoloV5.h"
+#include "YoloV4.h"
 
 using namespace cv;
 using namespace std;
@@ -427,7 +437,7 @@ Java_com_dji_FPVDemo_jni_NativeHelper_initFdsst(JNIEnv *env, jobject thiz,
     bboxForF.height = bottom - top;
     rectangle(frame, bboxForF, Scalar(255, 0, 0), 2, 1);
 
-    imwrite("/storage/emulated/0/result/readYuvfdsst.jpg", frame);
+//    imwrite("/storage/emulated/0/result/readYuvfdsst.jpg", frame);
     //跟踪器初始化
     cvtColor(frame, dst, CV_BGR2GRAY);
     trackerForF.init(bboxForF, dst);
@@ -474,7 +484,7 @@ Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsst(JNIEnv *env, jobject thiz,
     ostringstream oss;
     oss << "/storage/emulated/0/result/readFdsstRectangle" << countFdsst++ << ".jpg";
     cout << oss.str() << endl;
-    imwrite(oss.str(), frame);
+    //imwrite(oss.str(), frame);
 
 
     writeImage(frame);
@@ -482,6 +492,65 @@ Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsst(JNIEnv *env, jobject thiz,
     return oStructInfo;
 }
 /**********************************************FDSST*****************************************************/
+
+/**********************************************NCNN*****************************************************/
+
+JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    ncnn::create_gpu_instance();
+    if (ncnn::get_gpu_count() > 0) {
+        YoloV5::hasGPU = true;
+        YoloV4::hasGPU = true;
+    }
+    LOGD("get_gpu_count %d" , ncnn::get_gpu_count());
+    return JNI_VERSION_1_6;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    ncnn::destroy_gpu_instance();
+    delete YoloV5::detector;
+    delete YoloV4::detector;
+//    LOGD("jni onunload");
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dji_FPVDemo_jni_NativeHelper_initNcnn(JNIEnv *env, jclass clazz, jobject assetManager,
+                                               jboolean v4tiny, jboolean useGPU) {
+    // TODO: implement init()
+    if (YoloV4::detector != nullptr) {
+        delete YoloV4::detector;
+        YoloV4::detector = nullptr;
+    }
+    if (YoloV4::detector == nullptr) {
+        AAssetManager *mgr = AAssetManager_fromJava(env, assetManager);
+        if (v4tiny == 1) {
+            YoloV4::detector = new YoloV4(mgr, "yolov4-tiny-person-opt.param", "yolov4-tiny-person-opt.bin", useGPU);
+        }
+    }
+    LOGE("YoloV4 init is finish, status is ok.");
+}
+
+extern "C"
+JNIEXPORT jobjectArray JNICALL
+Java_com_dji_FPVDemo_jni_NativeHelper_detectForNcnn(JNIEnv *env, jclass clazz, jobject bitmap) {
+    // TODO: implement detect()
+
+    auto result = YoloV4::detector->detect(env, bitmap);
+    auto box_cls = env->FindClass("com/dji/FPVDemo/ncnn/Box");
+    auto cid = env->GetMethodID(box_cls, "<init>", "(FFFFIF)V");
+    jobjectArray ret = env->NewObjectArray(result.size(), box_cls, nullptr);
+    int i = 0;
+    for (auto &box:result) {
+        env->PushLocalFrame(1);
+        jobject obj = env->NewObject(box_cls, cid, box.x1, box.y1, box.x2, box.y2, box.label, box.score);
+        obj = env->PopLocalFrame(obj);
+        env->SetObjectArrayElement(ret, i++, obj);
+    }
+    return ret;
+}
+
+/**********************************************NCNN*****************************************************/
 
 void writeImage(const Mat &frame) {
     char p_str[128] = "/storage/emulated/0/ResultForFDSST/";
@@ -497,7 +566,7 @@ void writeImage(const Mat &frame) {
 
     const int len = strlen(p_str);
     sprintf(p_str + len, "cv_mat_%lf_ms_%dx%d.jpg", getTickCount() * 1000. / getTickFrequency(), frame.cols, frame.rows);
-    imwrite(p_str, frame);
+    //imwrite(p_str, frame);
 }
 
 /**********************************************TEST*****************************************************/

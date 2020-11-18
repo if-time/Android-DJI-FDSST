@@ -19,4 +19,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
+    <string name="tag_preview">preview</string>
+    <string name="tag_origin">origin</string>
+
 </resources>
