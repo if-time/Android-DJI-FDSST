@@ -3,7 +3,6 @@ package com.dji.FPVDemo.test.ncnnvulkan.camera2;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.ImageProxy;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -13,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -23,15 +21,12 @@ import android.graphics.YuvImage;
 import android.hardware.camera2.CameraDevice;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
-import android.view.Gravity;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,21 +37,28 @@ import com.dji.FPVDemo.ncnn.Box;
 import com.dji.FPVDemo.test.ncnnvulkan.util.ImageUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class CameraMainActivity extends AppCompatActivity implements ViewTreeObserver.OnGlobalLayoutListener, Camera2Listener {
 
     private static final String TAG = "CameraMainActivity";
     private static final int ACTION_REQUEST_PERMISSIONS = 1;
+    @BindView(R.id.ivImageViewForFrame)
+    ImageView ivImageViewForFrame;
     private Camera2Helper camera2Helper;
-    private TextureView textureView;
+    @BindView(R.id.tvCameraTexturePreview)
+    TextureView tvCameraTexturePreview;
+//    @BindView(R.id.tvInfoCamera)
+//    TextView tvInfoCamera;
     // 用于显示原始预览数据
-    private ImageView ivOriginFrame;
-    // 用于显示和预览画面相同的图像数据
-    private ImageView ivPreviewFrame;
+//    private ImageView ivOriginFrame;
+//    // 用于显示和预览画面相同的图像数据
+//    private ImageView ivPreviewFrame;
     // 默认打开的CAMERA
     private static final String CAMERA_ID = Camera2Helper.CAMERA_ID_BACK;
     // 图像帧数据，全局变量避免反复创建，降低gc频率
@@ -78,10 +80,16 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
             Manifest.permission.CAMERA
     };
 
+    private long startTime = 0;
+    private long endTime = 0;
+    double total_fps = 0;
+    int fps_count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_main);
+        ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         imageProcessExecutor = Executors.newSingleThreadExecutor();
@@ -90,8 +98,9 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
     }
 
     private void initView() {
-        textureView = findViewById(R.id.texture_preview);
-        textureView.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        ivImageViewForFrame.getLayoutParams().width = tvCameraTexturePreview.getWidth();
+        ivImageViewForFrame.getLayoutParams().height = tvCameraTexturePreview.getHeight();
+        tvCameraTexturePreview.getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
     void initCamera() {
@@ -101,8 +110,8 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
                 .minPreviewSize(new Point(1280, 720))
                 .specificCameraId(CAMERA_ID)
                 .context(getApplicationContext())
-                .previewOn(textureView)
-                .previewViewSize(new Point(textureView.getWidth(), textureView.getHeight()))
+                .previewOn(tvCameraTexturePreview)
+                .previewViewSize(new Point(tvCameraTexturePreview.getWidth(), tvCameraTexturePreview.getHeight()))
                 .rotation(getWindowManager().getDefaultDisplay().getRotation())
                 .build();
         camera2Helper.start();
@@ -132,45 +141,6 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
         this.displayOrientation = displayOrientation;
         this.isMirrorPreview = isMirror;
         this.openedCameraId = cameraId;
-        //在相机打开时，添加右上角的view用于显示原始数据和预览数据
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ivPreviewFrame = new BorderImageView(CameraMainActivity.this);
-                ivOriginFrame = new BorderImageView(CameraMainActivity.this);
-                TextView tvPreview = new TextView(CameraMainActivity.this);
-                TextView tvOrigin = new TextView(CameraMainActivity.this);
-                tvPreview.setTextColor(Color.WHITE);
-                tvOrigin.setTextColor(Color.WHITE);
-                tvPreview.setText(R.string.tag_preview);
-                tvOrigin.setText(R.string.tag_origin);
-                boolean needRotate = displayOrientation % 180 != 0;
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                int longSide = displayMetrics.widthPixels > displayMetrics.heightPixels ? displayMetrics.widthPixels : displayMetrics.heightPixels;
-                int shortSide = displayMetrics.widthPixels < displayMetrics.heightPixels ? displayMetrics.widthPixels : displayMetrics.heightPixels;
-
-                FrameLayout.LayoutParams previewLayoutParams = new FrameLayout.LayoutParams(
-                        !needRotate ? longSide / 4 : shortSide / 4,
-                        needRotate ? longSide / 4 : shortSide / 4
-                );
-                FrameLayout.LayoutParams originLayoutParams = new FrameLayout.LayoutParams(
-                        longSide / 4, shortSide / 4
-                );
-                previewLayoutParams.gravity = Gravity.END | Gravity.TOP;
-                originLayoutParams.gravity = Gravity.END | Gravity.TOP;
-                previewLayoutParams.topMargin = originLayoutParams.height;
-                ivPreviewFrame.setLayoutParams(previewLayoutParams);
-                tvPreview.setLayoutParams(previewLayoutParams);
-                ivOriginFrame.setLayoutParams(originLayoutParams);
-                tvOrigin.setLayoutParams(originLayoutParams);
-
-                ((FrameLayout) textureView.getParent()).addView(ivPreviewFrame);
-                ((FrameLayout) textureView.getParent()).addView(ivOriginFrame);
-                ((FrameLayout) textureView.getParent()).addView(tvPreview);
-                ((FrameLayout) textureView.getParent()).addView(tvOrigin);
-            }
-        });
     }
 
     @Override
@@ -180,6 +150,7 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void run() {
+                    startTime = System.currentTimeMillis();
                     if (nv21 == null) {
                         nv21 = new byte[stride * previewSize.getHeight() * 3 / 2];
                     }
@@ -222,13 +193,12 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
 
                     detectAndDraw(previewBitmap);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ivOriginFrame.setImageBitmap(originalBitmap);
-                            ivPreviewFrame.setImageBitmap(previewBitmap);
-                        }
-                    });
+                    endTime = System.currentTimeMillis();
+                    long dur = endTime - startTime;
+                    float fps = (float) (1000.0 / dur);
+                    total_fps = (total_fps == 0) ? fps : (total_fps + fps);
+                    fps_count++;
+                    String modelName = "YOLOv4-tiny-person";
                 }
             });
         }
@@ -236,28 +206,53 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
 
     protected void detectAndDraw(Bitmap image) {
         Box[] result = NativeHelper.getInstance().detectForNcnn(image);
-        drawBoxRects(image, result);
+        drawBoxRects(result);
     }
 
-    protected Bitmap drawBoxRects(Bitmap mutableBitmap, Box[] results) {
+    protected void drawBoxRects(Box[] results) {
         if (results == null || results.length <= 0) {
-            return mutableBitmap;
+            return;
         }
-        Canvas canvas = new Canvas(mutableBitmap);
+        final Bitmap croppedBitmap = Bitmap.createBitmap((int) tvCameraTexturePreview.getWidth(), (int) tvCameraTexturePreview.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(croppedBitmap);
         final Paint boxPaint = new Paint();
         boxPaint.setAlpha(200);
         boxPaint.setStyle(Paint.Style.STROKE);
-        boxPaint.setStrokeWidth(4 * mutableBitmap.getWidth() / 800.0f);
-        boxPaint.setTextSize(30 * mutableBitmap.getWidth() / 800.0f);
+        boxPaint.setStrokeWidth(4 * tvCameraTexturePreview.getWidth() / 800.0f);
+        boxPaint.setTextSize(30 * tvCameraTexturePreview.getWidth() / 800.0f);
         for (Box box : results) {
-            Log.i("Box box", "detectAndDraw: x: " + (box.x0 + 3) + " y: " + (box.y0 + 30 * mutableBitmap.getWidth() / 1000.0f));
+            Log.i("Box box", "detectAndDraw: x: " + (box.x0 + 3) + " y: " + (box.y0 + 30 * tvCameraTexturePreview.getWidth() / 1000.0f));
             boxPaint.setColor(box.getColor());
             boxPaint.setStyle(Paint.Style.FILL);
-            canvas.drawText(box.getLabel() + String.format(Locale.CHINESE, " %.3f", box.getScore()), box.x0 + 3, box.y0 + 30 * mutableBitmap.getWidth() / 1000.0f, boxPaint);
+            canvas.drawText(box.getLabel() + String.format(Locale.CHINESE, " %.3f", box.getScore()), box.x0 + 3, box.y0 + 30 * tvCameraTexturePreview.getWidth() / 1000.0f, boxPaint);
             boxPaint.setStyle(Paint.Style.STROKE);
             canvas.drawRect(box.getRect(), boxPaint);
         }
-        return mutableBitmap;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ivImageViewForFrame.setImageBitmap(croppedBitmap);
+
+                endTime = System.currentTimeMillis();
+                long dur = endTime - startTime;
+                float fps = (float) (1000.0 / dur);
+                total_fps = (total_fps == 0) ? fps : (total_fps + fps);
+                fps_count++;
+                String modelName = "YOLOv4-tiny-person";
+                Log.i("dongfpss", "run: " + fps);
+//                tvInfoCamera.setText(String.format(Locale.CHINESE,
+//                        "%s\nSize: %dx%d\nTime: %.3f s\nFPS: %.3f\nAVG_FPS: %.3f",
+//                        modelName, tvCameraTexturePreview.getHeight(), tvCameraTexturePreview.getWidth() , dur / 1000.0, fps, (float) total_fps / fps_count));
+            }
+        });
+
+//        ivImageViewForFrame.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                ivImageViewForFrame.setImageBitmap(croppedBitmap);
+//            }
+//        });
     }
 
     @Override
@@ -309,7 +304,7 @@ public class CameraMainActivity extends AppCompatActivity implements ViewTreeObs
      */
     @Override
     public void onGlobalLayout() {
-        textureView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        tvCameraTexturePreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         if (!checkPermissions(NEEDED_PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
         } else {

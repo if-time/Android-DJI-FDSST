@@ -31,6 +31,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dji.FPVDemo.R;
@@ -69,17 +70,22 @@ public class NcnnMainActivity extends AppCompatActivity {
     ImageView resultImageView;
     @BindView(R.id.tvViewFinder)
     TextureView tvViewFinder;
-
-    private AtomicBoolean detectCamera = new AtomicBoolean(false);
-    private AtomicBoolean detectPhoto = new AtomicBoolean(false);
-    private AtomicBoolean detectVideo = new AtomicBoolean(false);
-
-    private int width;
-    private int height;
+    @BindView(R.id.tvInfo)
+    TextView tvInfo;
 
     protected Bitmap mutableBitmap;
 
     ExecutorService detectService = Executors.newSingleThreadExecutor();
+
+    private AtomicBoolean detectCamera = new AtomicBoolean(false);
+
+    private int width;
+    private int height;
+
+    private long startTime = 0;
+    private long endTime = 0;
+    double total_fps = 0;
+    int fps_count = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -108,11 +114,7 @@ public class NcnnMainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (detectVideo.get() || detectPhoto.get()) {
-                    detectPhoto.set(false);
-                    detectVideo.set(false);
-                    startCamera();
-                }
+                startCamera();
             }
         });
 
@@ -232,10 +234,11 @@ public class NcnnMainActivity extends AppCompatActivity {
 
 
     private void detectOnModel(ImageProxy image, final int rotationDegrees) {
-        if (detectCamera.get() || detectPhoto.get() || detectVideo.get()) {
+        if (detectCamera.get()) {
             return;
         }
         detectCamera.set(true);
+        startTime = System.currentTimeMillis();
         final Bitmap bitmapsrc = imageToBitmap(image);  // 格式转换
         if (detectService == null) {
             detectCamera.set(false);
@@ -262,6 +265,17 @@ public class NcnnMainActivity extends AppCompatActivity {
             public void run() {
                 detectCamera.set(false);
                 resultImageView.setImageBitmap(mutableBitmap);
+
+                endTime = System.currentTimeMillis();
+                long dur = endTime - startTime;
+                float fps = (float) (1000.0 / dur);
+                total_fps = (total_fps == 0) ? fps : (total_fps + fps);
+                fps_count++;
+                String modelName = "YOLOv4-tiny-person";
+
+                tvInfo.setText(String.format(Locale.CHINESE,
+                        "%s\nSize: %dx%d\nTime: %.3f s\nFPS: %.3f\nAVG_FPS: %.3f",
+                        modelName, height, width, dur / 1000.0, fps, (float) total_fps / fps_count));
             }
         });
     }
@@ -303,7 +317,6 @@ public class NcnnMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         detectCamera.set(false);
-        detectVideo.set(false);
         if (detectService != null) {
             detectService.shutdown();
             detectService = null;

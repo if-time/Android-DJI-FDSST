@@ -38,7 +38,7 @@ public class WelcomeNcnnActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 useGPU = isChecked;
-//                NcnnMainActivity.USE_GPU = useGPU;
+                NcnnMainActivity.USE_GPU = useGPU;
 
                 if (useGPU) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeNcnnActivity.this);
