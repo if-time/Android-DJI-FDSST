@@ -1,12 +1,7 @@
 # ninja log v5
-17	3707	627369707	CMakeFiles/native-lib.dir/YoloV4.cpp.o	f2c391ce9f1ffc26
-13	3939	627369707	CMakeFiles/native-lib.dir/YoloV5.cpp.o	817451af23e5741c
-22	5314	627369709	CMakeFiles/native-lib.dir/fdsst/fhog.cpp.o	11cf36294998c1eb
-8	5866	627369709	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	9a56557ce86cfd35
-4	3151	627369816	CMakeFiles/native-lib.dir/native-lib.cpp.o	73a00c8724d04024
-3152	4118	627369817	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	572d5fcbd54fe5d3
-5	5363	627372382	CMakeFiles/native-lib.dir/native-lib.cpp.o	73a00c8724d04024
-4	2542	627372464	CMakeFiles/native-lib.dir/native-lib.cpp.o	73a00c8724d04024
-2543	3177	627372465	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	572d5fcbd54fe5d3
-6	4014	627373369	CMakeFiles/native-lib.dir/native-lib.cpp.o	73a00c8724d04024
-4014	4697	627373370	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	572d5fcbd54fe5d3
+13	2244	627384300	CMakeFiles/native-lib.dir/YoloV4.cpp.o	f2c391ce9f1ffc26
+10	2643	627384300	CMakeFiles/native-lib.dir/YoloV5.cpp.o	817451af23e5741c
+7	4948	627384303	CMakeFiles/native-lib.dir/fdsst/fhog.cpp.o	11cf36294998c1eb
+4	5700	627384303	CMakeFiles/native-lib.dir/fdsst/fdssttracker.cpp.o	9a56557ce86cfd35
+1	5701	627384303	CMakeFiles/native-lib.dir/native-lib.cpp.o	73a00c8724d04024
+5701	6966	627384305	C:/Users/Dong/Desktop/GraduationProject/Android-DJI-FDSST/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libnative-lib.so	572d5fcbd54fe5d3

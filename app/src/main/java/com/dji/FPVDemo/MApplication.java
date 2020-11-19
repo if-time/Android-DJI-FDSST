@@ -8,9 +8,12 @@ import android.util.Log;
 import com.dianping.logan.Logan;
 import com.dianping.logan.LoganConfig;
 import com.dianping.logan.OnLoganProtocolStatus;
+import com.dji.FPVDemo.handler.AppCrashHandler;
 import com.secneo.sdk.Helper;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xsj.crasheye.Crasheye;
+import com.zxy.recovery.callback.RecoveryCallback;
+import com.zxy.recovery.core.Recovery;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,6 +51,8 @@ public class MApplication extends Application {
         initLogan();
         initBugly();
 
+        //崩溃界面
+        initRecovery();
     }
 
     public static Context getContext() {
@@ -82,6 +87,45 @@ public class MApplication extends Application {
         strategy.setUploadProcess(processName == null || processName.equals(packageName));
         // 初始化Bugly
         CrashReport.initCrashReport(sContext, "4e60bd54eb", true, strategy);
+    }
+
+    private void initRecovery() {
+        Recovery.getInstance()
+                .debug(BuildConfig.DEBUG)
+                .recoverInBackground(true)
+                .recoverStack(true)
+                .mainPage(MainActivity.class)
+                .recoverEnabled(true)
+                .callback(new MyCrashCallback())
+                .silent(false, Recovery.SilentMode.RECOVER_ACTIVITY_STACK)
+//                .skip(TestActivity.class)
+                .init(this);
+        AppCrashHandler.register();
+    }
+
+    static final class MyCrashCallback implements RecoveryCallback {
+        @Override
+        public void stackTrace(String exceptionMessage) {
+            Log.e("wzt", "exceptionMessage:" + exceptionMessage);
+        }
+
+        @Override
+        public void cause(String cause) {
+            Log.e("wzt", "cause:" + cause);
+        }
+
+        @Override
+        public void exception(String exceptionType, String throwClassName, String throwMethodName, int throwLineNumber) {
+            Log.e("wzt", "exceptionClassName:" + exceptionType);
+            Log.e("wzt", "throwClassName:" + throwClassName);
+            Log.e("wzt", "throwMethodName:" + throwMethodName);
+            Log.e("wzt", "throwLineNumber:" + throwLineNumber);
+        }
+
+        @Override
+        public void throwable(Throwable throwable) {
+
+        }
     }
 
     /**
