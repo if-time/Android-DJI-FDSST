@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -172,6 +173,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForFDSST(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];
@@ -229,7 +231,7 @@ public class MainActivity extends DJIMainActivity {
             LogUtil.addLineToSB(sb, "controlValueIncX: ", controlValueIncX);
             LogUtil.addLineToSB(sb, "controlValueIncY: ", controlValueIncY);
             setResultToText(sb.toString());
-            CommonUtils.showToast(MainActivity.this, "ms: " + (System.currentTimeMillis() - start));
+//            CommonUtils.showToast(MainActivity.this, "ms: " + (System.currentTimeMillis() - start));
             setFPS(1000 / (System.currentTimeMillis() - start));
             Paint paint = new Paint();
             paint.setColor(Color.RED);
@@ -255,6 +257,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForKCF(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];

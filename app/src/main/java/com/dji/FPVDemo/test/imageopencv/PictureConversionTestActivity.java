@@ -21,7 +21,7 @@ import com.dji.FPVDemo.R;
 public class PictureConversionTestActivity extends AppCompatActivity {
 
     static{
-        System.loadLibrary("apriltag");
+        System.loadLibrary("native-lib");
     }
 
     @Override
@@ -33,6 +33,7 @@ public class PictureConversionTestActivity extends AppCompatActivity {
         Button button = findViewById(R.id.btChange);
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.zheng);
+        imwriter(bitmap);
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixArr = new int[width * height];
@@ -50,5 +51,6 @@ public class PictureConversionTestActivity extends AppCompatActivity {
     }
 
     public native int[] gray(int[] pix, int w, int h);
+    public native void imwriter(Object srcBitmap);
 
 }

@@ -548,14 +548,13 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     /**
      * touchFrameView
      *
-     * @param view
      */
-    public void addTouchFrameView(View view) {
+    public void addTouchFrameView() {
         touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
 
         tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
 
-        llViewForFrameContainer.addView(touchFrameView,
+        llTouchFrameViewContainer.addView(touchFrameView,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         // 来自TouchPaintView
@@ -604,8 +603,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     @OnClick(R.id.btnThermalCamera)
     public void setThermalCamera() {
-        setThermalConfig();
-        CommonUtils.showToast(DJIMainActivity.this, "红外");
+//        setThermalConfig();
+//        CommonUtils.showToast(DJIMainActivity.this, "红外");
+        addTouchFrameView();
     }
 
     /**
@@ -616,8 +616,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         if (runDetectionForTensorFlow) {
             stopBackgroundThreadForTensorFlow();
         } else {
-            startBackgroundThreadForTensorFlow();
-//            tpvTouchFrame.clearView();
+//            startBackgroundThreadForTensorFlow();
+            startBackgroundThreadForTracking();
+            tpvTouchFrame.clearView();
         }
     }
 
