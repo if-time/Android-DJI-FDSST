@@ -16,4 +16,7 @@
     <color name="app_main_color">#3F51B5</color>
 
     <color name="mask_color">#66000000</color>
+
+    <color name="colorBlue">#146BFE</color>
+    <color name="disableColorBlue">#80146BFE</color>
 </resources>

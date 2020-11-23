@@ -145,6 +145,12 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
 
     // Logan
     implementation 'com.dianping.android.sdk:logan:1.2.4'
+
+    // Guava
+    implementation "com.google.guava:guava:30.0-android"
+
+    // crash
+    implementation 'com.zxy.android:recovery:1.0.0'
 }
 
 // Please uncomment the following code if you use your own sdk version.

@@ -1,19 +1,14 @@
 package com.dji.FPVDemo;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
@@ -46,9 +41,6 @@ public class MainActivity extends DJIMainActivity {
     private static final int TF_OD_API_INPUT_SIZE = 300;
     private static final float TEXT_SIZE_DIP = 10;
 
-    private int widthDisplay;
-    private int heightDisplay;
-
     private static float canvasWidth = 0;
     private static float canvasHeight = 0;
 
@@ -66,8 +58,6 @@ public class MainActivity extends DJIMainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getDisplaySize();
 
         final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
         borderedText = new BorderedText(textSizePx);
@@ -103,22 +93,6 @@ public class MainActivity extends DJIMainActivity {
 //                classifierFromTensorFlow.close();
             }
         });
-    }
-
-    /**
-     * 获取屏幕大小
-     */
-    private void getDisplaySize() {
-        WindowManager manager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        if (Build.VERSION.SDK_INT < 17) {
-            display.getSize(point);
-        } else {
-            display.getRealSize(point);
-        }
-        widthDisplay = point.x;
-        heightDisplay = point.y;
     }
 
     /**
@@ -172,6 +146,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForFDSST(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];
@@ -255,6 +230,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForKCF(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];

@@ -4,17 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-
-import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,18 +21,18 @@ import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dianping.logan.Logan;
-import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
+import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
 import com.dji.FPVDemo.utils.CommonUtils;
+import com.dji.FPVDemo.utils.DensityUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.OverlayView;
-import com.dji.FPVDemo.view.TouchFrameView;
+import com.dji.FPVDemo.view.xcslideview.XCSlideView;
 
 import java.io.File;
 
@@ -72,6 +70,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
 
+    public int widthDisplay;
+    public int heightDisplay;
+
     private boolean runTracking = false;
     private boolean runDetectionForTensorFlow = false;
     // 虚拟摇杆默认是关闭的
@@ -98,15 +99,20 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private final Object lockForTensorFlow = new Object();
 
-    private View touchFrameView;
+    private XCSlideView slideViewRightMoreSetting;
+
+//    private View touchFrameView;
+
+    @BindView(R.id.ivMoreSetting)
+    ImageView ivMoreSetting;
 
     //    private AutoFitTextureView mVideoSurface = null;
     @BindView(R.id.tvVideoPreviewer)
     TextureView tvVideoPreviewer = null;
     @BindView(R.id.btnThermalCamera)
     Button btnThermalCamera;
-    @BindView(R.id.btnBackgroundThread)
-    Button btnBackgroundThread;
+    @BindView(R.id.ivBackgroundThread)
+    ImageView ivBackgroundThread;
 
     @BindView(R.id.tvFPS)
     TextView tvFPS;
@@ -114,8 +120,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     @BindView(R.id.ivImageViewForFrame)
     ImageView ivImageViewForFrame;
 
-//    @BindView(R.id.tpvTouchFrame)
-    TouchFrameView tpvTouchFrame;
+    //    @BindView(R.id.tpvTouchFrame)
+//    TouchFrameView tpvTouchFrame;
 
     @BindView(R.id.ovTrackingOverlay)
     OverlayView ovTrackingOverlay;
@@ -136,15 +142,40 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     @BindView(R.id.llViewForFrameContainer)
     LinearLayout llViewForFrameContainer;
 
+    TrackingForTouchFrameView itemTrackingForTouchFrameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_video_feeder);
         ButterKnife.bind(this);
+
+        widthDisplay = DensityUtil.getScreenWidthAndHeight(this)[0];
+        heightDisplay = DensityUtil.getScreenWidthAndHeight(this)[1];
+
         initListener();
 
         // 注册无人机监听广播
         initFlightController();
+
+        initSlideView();
+    }
+
+    private void initSlideView() {
+        View menuViewLeft = LayoutInflater.from(this).inflate(R.layout.layout_slideview, null);
+        slideViewRightMoreSetting = XCSlideView.create(this, XCSlideView.Positon.LEFT);
+        slideViewRightMoreSetting.setMenuView(DJIMainActivity.this, menuViewLeft);
+        slideViewRightMoreSetting.setMenuWidth(widthDisplay * 4 / 9);
+        itemTrackingForTouchFrameView = menuViewLeft.findViewById(R.id.itemTrackingForTouchFrameView);
+        menuViewLeft.findViewById(R.id.ivBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (slideViewRightMoreSetting.isShow()) {
+                    slideViewRightMoreSetting.dismiss();
+                }
+            }
+        });
+        itemTrackingForTouchFrameView.addTouchFrameView(this, llTouchFrameViewContainer);
     }
 
     private void initListener() {
@@ -236,6 +267,15 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             });
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (slideViewRightMoreSetting.isShow()) {
+            slideViewRightMoreSetting.dismiss();
+            return;
+        }
+        super.onBackPressed();
     }
 
     private void initPreviewer() {
@@ -550,28 +590,29 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      *
      * @param view
      */
-    public void addTouchFrameView(View view) {
-        touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
-
-        tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
-
-        llViewForFrameContainer.addView(touchFrameView,
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        // 来自TouchPaintView
-        // 确定点击到了画框区域
-        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
-            @Override
-            public void confirmForTracking(final RectF rectFForFrame) {
-                // showToast("回调");
-                initTrackingAlgorithm(rectFForFrame);
-            }
-        });
-
-    }
+//    public void addTouchFrameView(View view) {
+//        touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
+//
+//        tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
+//
+//        llViewForFrameContainer.addView(touchFrameView,
+//                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//
+//        // 来自TouchPaintView
+//        // 确定点击到了画框区域
+//        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
+//            @Override
+//            public void confirmForTracking(final RectF rectFForFrame) {
+//                // showToast("回调");
+//                initTrackingAlgorithm(rectFForFrame);
+//            }
+//        });
+//
+//    }
 
     /**
      * 通过回调获得RectF坐标，进行跟踪算法初始化
+     *
      * @param rectFForFrame
      */
     public void initTrackingAlgorithm(RectF rectFForFrame) {
@@ -602,6 +643,13 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         }, true);
     }
 
+    @OnClick(R.id.ivMoreSetting)
+    public void isShowSlideView() {
+        if (!slideViewRightMoreSetting.isShow()) {
+            slideViewRightMoreSetting.show();
+        }
+    }
+
     @OnClick(R.id.btnThermalCamera)
     public void setThermalCamera() {
         setThermalConfig();
@@ -611,13 +659,21 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     /**
      * 开启关闭线程
      */
-    @OnClick(R.id.btnBackgroundThread)
+    @OnClick(R.id.ivBackgroundThread)
     public void clickBtnBackgroundThread() {
         if (runDetectionForTensorFlow) {
             stopBackgroundThreadForTensorFlow();
+            if (!runDetectionForTensorFlow) {
+                ivBackgroundThread.setBackgroundResource(R.mipmap.ic_detect_close);
+            }
         } else {
             startBackgroundThreadForTensorFlow();
-//            tpvTouchFrame.clearView();
+            if (runDetectionForTensorFlow) {
+                ivBackgroundThread.setBackgroundResource(R.mipmap.ic_detect_open);
+            }
+
+            itemTrackingForTouchFrameView.clearView();
+
         }
     }
 
@@ -642,6 +698,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      */
     @OnClick(R.id.ivSimulatorSetting)
     public void simulatorStatusEnabled() {
+        CommonUtils.showToast(this, "通过点击按钮来开关虚拟摇杆" + " : " + (mFlightController != null));
         if (mFlightController != null) {
             mFlightController.getVirtualStickModeEnabled(new CommonCallbacks.CompletionCallbackWith<Boolean>() {
                 @Override
