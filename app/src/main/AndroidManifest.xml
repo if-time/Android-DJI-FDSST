@@ -45,7 +45,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".test.RecyclerViewMainActivity" />
         <activity android:name=".test.drawerlayout.CustomSideSlipMenuActivity" />
->>>>>>> develop
 
         <uses-library
             android:name="org.apache.http.legacy"
