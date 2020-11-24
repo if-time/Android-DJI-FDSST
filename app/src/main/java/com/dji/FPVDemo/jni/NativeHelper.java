@@ -1,8 +1,7 @@
 package com.dji.FPVDemo.jni;
 
 
-import com.dji.FPVDemo.tracking.KCFResultFormJNI;
-import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
+import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 
 /**
  * @author dongsiyuan
@@ -36,13 +35,15 @@ public class NativeHelper {
 
     /**********************************************KCF*****************************************************/
     public native void initKcf(Object srcBitmap, float left, float top, float right, float bottom, int width, int height);
-    public native KCFResultFormJNI usingKcf(Object srcBitmap, int width, int height);
+    public native TrackingResultFormJNI usingKcf(Object srcBitmap, int width, int height);
     /**********************************************KCF*****************************************************/
 
     /**********************************************FDSST*****************************************************/
     public native void initFdsst(Object srcBitmap, float left, float top, float right, float bottom, int width, int height);
 
-    public native FDSSTResultFormJNI usingFdsst(Object srcBitmap, int width, int height);
+    public native TrackingResultFormJNI usingFdsst(Object srcBitmap, int width, int height);
+
+    public native TrackingResultFormJNI usingFdsstMat(long matAddress, int width, int height);
 
     /**********************************************FDSST*****************************************************/
 
