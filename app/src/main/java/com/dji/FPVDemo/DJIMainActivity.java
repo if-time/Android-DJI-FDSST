@@ -1,6 +1,7 @@
 package com.dji.FPVDemo;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
@@ -13,7 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,12 +26,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dianping.logan.Logan;
+import com.dji.FPVDemo.customview.DetectionModelView;
 import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
+import com.dji.FPVDemo.enums.TrackerTypeEnum;
+import com.dji.FPVDemo.interf.AddOverlayView;
+import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
+import com.dji.FPVDemo.utils.BorderedText;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.DensityUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
+import com.dji.FPVDemo.view.MultiBoxTracker;
 import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.xcslideview.XCSlideView;
 
@@ -39,7 +46,6 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import dji.common.camera.SettingsDefinitions;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.simulator.SimulatorState;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
@@ -68,7 +74,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private static final String TAG = DJIMainActivity.class.getName();
 
-    private static final String HANDLE_THREAD_NAME = "CameraBackgroundDetection";
+    private static final String HANDLE_THREAD_DETECTION_NAME = "ThreadForTensorFlow";
+    private static final String HANDLE_THREAD_TRACKING_NAME = "ThreadForTracking";
 
     public int widthDisplay;
     public int heightDisplay;
@@ -77,10 +84,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     private boolean runDetectionForTensorFlow = false;
     // 虚拟摇杆默认是关闭的
     private boolean isSimulator = false;
-
-    public enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW}
-
-    public static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 
     private FlightController mFlightController;
 
@@ -99,9 +102,14 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private final Object lockForTensorFlow = new Object();
 
+    // 画框
+    public MultiBoxTracker tracker;
+    public BorderedText borderedText;
+
     private XCSlideView slideViewRightMoreSetting;
 
-//    private View touchFrameView;
+    OverlayView ovTrackingOverlay;
+    View overlayView;
 
     @BindView(R.id.ivMoreSetting)
     ImageView ivMoreSetting;
@@ -109,8 +117,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     //    private AutoFitTextureView mVideoSurface = null;
     @BindView(R.id.tvVideoPreviewer)
     TextureView tvVideoPreviewer = null;
-    @BindView(R.id.btnThermalCamera)
-    Button btnThermalCamera;
+
     @BindView(R.id.ivBackgroundThread)
     ImageView ivBackgroundThread;
 
@@ -119,12 +126,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     @BindView(R.id.ivImageViewForFrame)
     ImageView ivImageViewForFrame;
-
-    //    @BindView(R.id.tpvTouchFrame)
-//    TouchFrameView tpvTouchFrame;
-
-    @BindView(R.id.ovTrackingOverlay)
-    OverlayView ovTrackingOverlay;
 
     @BindView(R.id.ivSimulatorSetting)
     ImageView ivSimulatorSetting;
@@ -141,8 +142,11 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     LinearLayout llTouchFrameViewContainer;
     @BindView(R.id.llViewForFrameContainer)
     LinearLayout llViewForFrameContainer;
+    @BindView(R.id.llOverlayViewContainer)
+    LinearLayout llOverlayViewContainer;
 
     TrackingForTouchFrameView itemTrackingForTouchFrameView;
+    DetectionModelView itemDetectionModelView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,20 +166,20 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     }
 
     private void initSlideView() {
-        View menuViewLeft = LayoutInflater.from(this).inflate(R.layout.layout_slideview, null);
-        slideViewRightMoreSetting = XCSlideView.create(this, XCSlideView.Positon.LEFT);
-        slideViewRightMoreSetting.setMenuView(DJIMainActivity.this, menuViewLeft);
+        View menuViewRight = LayoutInflater.from(this).inflate(R.layout.layout_slideview, null);
+        slideViewRightMoreSetting = XCSlideView.create(this, XCSlideView.Positon.RIGHT);
+        slideViewRightMoreSetting.setMenuView(DJIMainActivity.this, menuViewRight);
         slideViewRightMoreSetting.setMenuWidth(widthDisplay * 4 / 9);
-        itemTrackingForTouchFrameView = menuViewLeft.findViewById(R.id.itemTrackingForTouchFrameView);
-        menuViewLeft.findViewById(R.id.ivBack).setOnClickListener(new View.OnClickListener() {
+        itemTrackingForTouchFrameView = menuViewRight.findViewById(R.id.itemTrackingForTouchFrameView);
+        itemTrackingForTouchFrameView.initView(this, llTouchFrameViewContainer);
+        itemDetectionModelView = menuViewRight.findViewById(R.id.itemDetectionModelView);
+        itemDetectionModelView.initView(this, getSupportFragmentManager());
+        itemDetectionModelView.setAddOverlayViewCallback(new AddOverlayView() {
             @Override
-            public void onClick(View v) {
-                if (slideViewRightMoreSetting.isShow()) {
-                    slideViewRightMoreSetting.dismiss();
-                }
+            public void addOverlay() {
+                addOverlayView();
             }
         });
-        itemTrackingForTouchFrameView.addTouchFrameView(this, llTouchFrameViewContainer);
     }
 
     private void initListener() {
@@ -194,31 +198,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 }
             }
         };
-    }
-
-    private void setThermalConfig() {
-        BaseProduct baseProduct = DJIApplication.getProductInstance();
-        mCamera = baseProduct.getCameras().get(0);
-        mCamera.setDisplayMode(SettingsDefinitions.DisplayMode.MSX, new CommonCallbacks.CompletionCallback() {
-            @Override
-            public void onResult(DJIError djiError) {
-                if (djiError != null) {
-
-                }
-            }
-        });
-        mCamera.setMSXLevel(90, new CommonCallbacks.CompletionCallback() {
-            @Override
-            public void onResult(DJIError djiError) {
-
-            }
-        });
-        mCamera.setThermalPalette(SettingsDefinitions.ThermalPalette.FUSION, new CommonCallbacks.CompletionCallback() {
-            @Override
-            public void onResult(DJIError djiError) {
-
-            }
-        });
 
     }
 
@@ -335,7 +314,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      * 启动后台线程
      */
     public void startBackgroundThreadForTensorFlow() {
-        backgroundThreadForTensorFlow = new HandlerThread(HANDLE_THREAD_NAME);
+        backgroundThreadForTensorFlow = new HandlerThread(HANDLE_THREAD_DETECTION_NAME);
         backgroundThreadForTensorFlow.start();
         backgroundHandlerForTensorFlow = new Handler(backgroundThreadForTensorFlow.getLooper());
         synchronized (lockForTensorFlow) {
@@ -390,7 +369,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      * 启动后台线程
      */
     public void startBackgroundThreadForTracking() {
-        backgroundThreadForTracking = new HandlerThread(HANDLE_THREAD_NAME);
+        backgroundThreadForTracking = new HandlerThread(HANDLE_THREAD_TRACKING_NAME);
         backgroundThreadForTracking.start();
         backgroundHandlerForTracking = new Handler(backgroundThreadForTracking.getLooper());
         synchronized (lockForTracking) {
@@ -438,7 +417,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
      * 识别
      */
     private void frameForTracking() {
-        switch (trackerType) {
+        switch (TrackerTypeEnum.trackerType) {
             case USE_KCF:
                 trackingForKCF();
 //                showToast("trackingForKCF");
@@ -446,6 +425,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             case USE_FDSST:
                 trackingForFDSST();
 //                showToast("trackingForFDSST");
+                removeOverlayView();
                 break;
             case USE_TENSORFLOW:
                 detectionForTensorFlow();
@@ -586,31 +566,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     }
 
     /**
-     * touchFrameView
-     *
-     * @param view
-     */
-//    public void addTouchFrameView(View view) {
-//        touchFrameView = LayoutInflater.from(this).inflate(R.layout.inflater_touch_frame, null);
-//
-//        tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
-//
-//        llViewForFrameContainer.addView(touchFrameView,
-//                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//
-//        // 来自TouchPaintView
-//        // 确定点击到了画框区域
-//        tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
-//            @Override
-//            public void confirmForTracking(final RectF rectFForFrame) {
-//                // showToast("回调");
-//                initTrackingAlgorithm(rectFForFrame);
-//            }
-//        });
-//
-//    }
-
-    /**
      * 通过回调获得RectF坐标，进行跟踪算法初始化
      *
      * @param rectFForFrame
@@ -630,11 +585,11 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 switch (result) {
                     case 0:
                         trackingInitForKCF(rectFForFrame, bitmapForTracking);
-                        trackerType = TrackerType.USE_KCF;
+                        TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_KCF;
                         break;
                     case 1:
                         trackingInitForFDSST(rectFForFrame, bitmapForTracking);
-                        trackerType = TrackerType.USE_FDSST;
+                        TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_FDSST;
                         break;
                     default:
                         break;
@@ -650,29 +605,37 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         }
     }
 
-    @OnClick(R.id.btnThermalCamera)
-    public void setThermalCamera() {
-        setThermalConfig();
-        CommonUtils.showToast(DJIMainActivity.this, "红外");
-    }
-
     /**
      * 开启关闭线程
      */
     @OnClick(R.id.ivBackgroundThread)
     public void clickBtnBackgroundThread() {
-        if (runDetectionForTensorFlow) {
-            stopBackgroundThreadForTensorFlow();
-            if (!runDetectionForTensorFlow) {
+        if (runTracking) {
+//            stopBackgroundThreadForTensorFlow();
+            stopBackgroundThreadForTracking();
+            if (!runTracking) {
                 ivBackgroundThread.setBackgroundResource(R.mipmap.ic_detect_close);
             }
+
+            if (TrackerTypeEnum.trackerType == TrackerTypeEnum.TrackerType.USE_FDSST) {
+                clearFrame();
+            }
+
+            if (TrackerTypeEnum.trackerType == TrackerTypeEnum.TrackerType.USE_TENSORFLOW) {
+                removeOverlayView();
+            }
+
+
         } else {
-            startBackgroundThreadForTensorFlow();
-            if (runDetectionForTensorFlow) {
+//            startBackgroundThreadForTensorFlow();
+            startBackgroundThreadForTracking();
+            if (runTracking) {
                 ivBackgroundThread.setBackgroundResource(R.mipmap.ic_detect_open);
             }
 
-            itemTrackingForTouchFrameView.clearView();
+            if (itemTrackingForTouchFrameView != null) {
+                itemTrackingForTouchFrameView.clearView();
+            }
 
         }
     }
@@ -746,6 +709,59 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             }
         });
     }
+
+    /**
+     * 清除追踪的框
+     */
+    private void clearFrame() {
+        final Bitmap croppedBitmap = Bitmap.createBitmap((int) tvVideoPreviewer.getWidth(), (int) tvVideoPreviewer.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(croppedBitmap);
+        ivImageViewForFrame.post(new Runnable() {
+            @Override
+            public void run() {
+                ivImageViewForFrame.setImageBitmap(croppedBitmap);
+            }
+        });
+    }
+
+    private void addOverlayView() {
+        overlayView = LayoutInflater.from(this).inflate(R.layout.inflater_overlay_view, null);
+
+        ovTrackingOverlay = overlayView.findViewById(R.id.ovTrackingOverlay);
+
+        llOverlayViewContainer.addView(overlayView,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        ovTrackingOverlay.addCallback(new OverlayView.DrawCallback() {
+            @Override
+            public void drawCallback(final Canvas canvas) {
+                tracker.draw(canvas);
+            }
+        });
+
+//        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
+        tracker.inputTrackingOverlayObject(ovTrackingOverlay);
+        tracker.setConfirmLocationForTensorFlow(new ConfirmLocationForTensorFlow() {
+            @Override
+            public void confirmForTracking(RectF rectFForFrame) {
+//                trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
+//                trackerType = TrackerTypeEnum.USE_FDSST;
+                initTrackingAlgorithm(rectFForFrame);
+
+                startBackgroundThreadForTracking();
+
+//                classifierFromTensorFlow.close();
+            }
+        });
+
+    }
+
+    public void removeOverlayView() {
+        if (llOverlayViewContainer != null) {
+            llOverlayViewContainer.removeAllViews();
+        }
+    }
+
 
     protected abstract void trackingInitForKCF(RectF rectFForFrame, Bitmap bitmapForTracking);
 

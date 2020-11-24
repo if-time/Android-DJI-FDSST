@@ -137,12 +137,18 @@ public class DialogFragmentHelper {
     private static final int LIST_THEME = R.style.Base_AlertDialog;
     private static final String LIST_TAG = TAG_HEAD + ":list";
 
+    public static DialogFragment showListDialog(FragmentManager fragmentManager, final String title, final String[] items
+            , final IDialogResultListener<Integer> resultListener, boolean cancelable ){
+        showListDialog(null, fragmentManager, title, items, resultListener, cancelable);
+        return null;
+    }
+
     public static DialogFragment showListDialog(Context context, FragmentManager fragmentManager, final String title, final String[] items
             , final IDialogResultListener<Integer> resultListener, boolean cancelable ){
         CommonDialogFragment dialogFragment = CommonDialogFragment.newInstance(new CommonDialogFragment.OnCallDialog() {
             @Override
             public Dialog getDialog(Context context) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context, LIST_THEME);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.custom_dialog_corner);
                 builder.setTitle(title);
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override

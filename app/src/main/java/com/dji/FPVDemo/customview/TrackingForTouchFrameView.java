@@ -1,6 +1,5 @@
 package com.dji.FPVDemo.customview;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -30,12 +29,15 @@ import butterknife.OnClick;
  */
 public class TrackingForTouchFrameView extends CommonView {
 
+    @BindView(R.id.btnAddView)
+    Button btnAddView;
+
+    @BindView(R.id.btnRemoveView)
+    Button btnRemoveView;
+
     private View touchFrameView;
 
     TouchFrameView tpvTouchFrame;
-
-    @BindView(R.id.btnAddView)
-    Button btnAddView;
 
     LinearLayout llTouchFrameViewContainer;
     DJIMainActivity activity;
@@ -58,8 +60,7 @@ public class TrackingForTouchFrameView extends CommonView {
     }
 
     @OnClick(R.id.btnAddView)
-    public void addTouchFrameView() {
-        CommonUtils.showToast(activity, "OnClick回调");
+    public void initView() {
         touchFrameView = LayoutInflater.from(activity).inflate(R.layout.inflater_touch_frame, null);
 
         tpvTouchFrame = touchFrameView.findViewById(R.id.tpvTouchFrame);
@@ -72,10 +73,19 @@ public class TrackingForTouchFrameView extends CommonView {
         tpvTouchFrame.setConfirmLocationForTracking(new ConfirmLocationForTracking() {
             @Override
             public void confirmForTracking(final RectF rectFForFrame) {
-                CommonUtils.showToast(activity, "TrackingForTouchFrameView回调");
                 activity.initTrackingAlgorithm(rectFForFrame);
             }
         });
+
+        btnAddView.setEnabled(false);
+        btnRemoveView.setEnabled(true);
+    }
+
+    @OnClick(R.id.btnRemoveView)
+    public void removeView() {
+        llTouchFrameViewContainer.removeAllViews();
+        btnAddView.setEnabled(true);
+        btnRemoveView.setEnabled(false);
     }
 
     /**
@@ -84,7 +94,7 @@ public class TrackingForTouchFrameView extends CommonView {
      * @param activity
      * @param llTouchFrameViewContainer
      */
-    public void addTouchFrameView(DJIMainActivity activity, LinearLayout llTouchFrameViewContainer) {
+    public void initView(DJIMainActivity activity, LinearLayout llTouchFrameViewContainer) {
         this.activity = activity;
         this.llTouchFrameViewContainer = llTouchFrameViewContainer;
     }
