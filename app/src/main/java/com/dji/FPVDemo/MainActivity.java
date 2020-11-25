@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
+import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
 import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
 import com.dji.FPVDemo.tracking.KCFResultFormJNI;
@@ -87,7 +88,21 @@ public class MainActivity extends DJIMainActivity {
                 tracker.draw(canvas);
             }
         });
-        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
+
+//        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
+        tracker.inputTrackingOverlayObject(ovTrackingOverlay);
+        tracker.setConfirmLocationForTensorFlow(new ConfirmLocationForTensorFlow() {
+            @Override
+            public void confirmForTracking(RectF rectFForFrame) {
+//                trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
+//                trackerType = TrackerType.USE_FDSST;
+                initTrackingAlgorithm(rectFForFrame);
+                stopBackgroundThreadForTensorFlow();
+                startBackgroundThreadForTracking();
+
+//                classifierFromTensorFlow.close();
+            }
+        });
     }
 
     /**
@@ -110,9 +125,6 @@ public class MainActivity extends DJIMainActivity {
      * detectionForTensorFlow
      */
     @Override
-    /**
-     * detectionForTensorFlow
-     */
     public void detectionForTensorFlow() {
         ovTrackingOverlay.postInvalidate();
         if (classifierFromTensorFlow == null) {
@@ -126,21 +138,13 @@ public class MainActivity extends DJIMainActivity {
             CommonUtils.showToast(MainActivity.this, "bitmap == null");
             return;
         } else {
-            //           showToast("bitmap == getWidth: " + bitmap.getWidth() + " bitmap == getHeight: " + bitmap.getHeight());
             final List<ClassifierFromTensorFlow.Recognition> results = classifierFromTensorFlow.recognizeImage(bitmap);
 
             canvasWidth = tvVideoPreviewer.getWidth();
             canvasHeight = tvVideoPreviewer.getHeight();
-            //           if (mVideoSurface.getWidth() != imageView.getWidth() || mVideoSurface.getHeight() != imageView.getHeight()) {
-            //               canvasWidth = mVideoSurface.getWidth();
-            //               canvasHeight = mVideoSurface.getHeight();
             ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
             ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
-            //           }
             bitmap.recycle();
-
-            final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
-            final Canvas canvas = new Canvas(croppedBitmap);
 
             final List<ClassifierFromTensorFlow.Recognition> mappedRecognitions = new LinkedList<ClassifierFromTensorFlow.Recognition>();
 
@@ -155,49 +159,10 @@ public class MainActivity extends DJIMainActivity {
                             canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE);
                     result.setLocation(locationDisplay);
                     mappedRecognitions.add(result);
-//                    Paint paint = new Paint();
-//                    Paint paint1 = new Paint();
-//                    if (result.getTitle().equals("openeyes")) {
-//                        paint.setColor(Color.GREEN);
-//                        paint1.setColor(Color.GREEN);
-//                    } else if (result.getTitle().equals("closeeyes")) {
-//                        paint.setColor(Color.RED);
-//                        paint1.setColor(Color.RED);
-//
-//                    } else if (result.getTitle().equals("phone")) {
-//                        paint.setColor(0xFFFF9900);
-//                        paint1.setColor(0xFFFF9900);
-//
-//                    } else if (result.getTitle().equals("smoke")) {
-//                        paint.setColor(Color.YELLOW);
-//                        paint1.setColor(Color.YELLOW);
-//                    } else {
-//                        paint.setColor(Color.WHITE);
-//                    }
-//
-//                    paint.setStyle(Paint.Style.STROKE);
-//                    paint.setStrokeWidth(5.0f);
-//                    paint.setAntiAlias(true);
-//                    paint1.setStyle(Paint.Style.FILL);
-//                    paint1.setAlpha(125);
-//                    //                canvas.drawRect(location, paint);
-//                    //                   canvas.drawText();
-//                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint);
-//                    canvas.drawRect(canvasWidth * location.left / TF_OD_API_INPUT_SIZE, canvasHeight * location.top / TF_OD_API_INPUT_SIZE, canvasWidth * location.right / TF_OD_API_INPUT_SIZE, canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE, paint1);
-//                    canvas.drawRect((float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), (float) (canvasWidth * 0.5), (float) (canvasHeight * 0.5), paint);
-
-
                 }
-
             }
             tracker.trackResultsFromTensorFlow(mappedRecognitions);
             ovTrackingOverlay.postInvalidate();
-//            imageViewForFrame.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    imageViewForFrame.setImageBitmap(croppedBitmap);
-//                }
-//            });
         }
     }
 

@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.dji.FPVDemo.test.RecyclerViewMainActivity;
-import com.dji.FPVDemo.test.logan.LoganMainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
