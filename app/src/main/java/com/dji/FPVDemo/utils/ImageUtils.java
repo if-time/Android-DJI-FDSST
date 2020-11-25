@@ -58,6 +58,7 @@ public class ImageUtils {
         Bitmap bmp32 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
+        bmp32.recycle();
         return mat;
     }
 

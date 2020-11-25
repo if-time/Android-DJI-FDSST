@@ -192,8 +192,9 @@ public class XCSlideView extends RelativeLayout {
      * 显示侧滑菜单View
      */
     public void show() {
-        if (isShow() && !mIsMoving)
+        if (isShow() && !mIsMoving) {
             return;
+        }
         switch (mPositon) {
             case LEFT:
                 startScroll(mMenuWidth, -mMenuWidth, mDuration);
@@ -225,8 +226,9 @@ public class XCSlideView extends RelativeLayout {
      */
     public void dismiss() {
         // TODO Auto-generated method stub
-        if (!isShow() && !mIsMoving)
+        if (!isShow() && !mIsMoving) {
             return;
+        }
         switch (mPositon) {
             case LEFT:
                 startScroll(XCSlideView.this.getScrollX(), mMenuWidth, mDuration);

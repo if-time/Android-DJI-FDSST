@@ -1,6 +1,12 @@
 package com.dji.FPVDemo.tracking;
 
-public class KCFResultFormJNI {
+/**
+ * KCF、FDSST等追踪返回结果
+ *
+ * @author dongsiyuan
+ * @since 2020/11/24 14:48
+ */
+public class TrackingResultFormJNI {
     public int x;
     public int y;
     public int width;

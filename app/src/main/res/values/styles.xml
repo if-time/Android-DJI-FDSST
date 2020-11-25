@@ -53,4 +53,30 @@
         <item name="colorAccent">@color/app_main_color</item>
     </style>
 
+    <!-- dialog弹窗样式带有圆角 -->
+    <style name="custom_dialog_corner" parent="Base_AlertDialog">
+        <item name="windowFixedWidthMinor">80%</item>
+        <item name="windowFixedWidthMajor">80%</item>
+        <item name="android:windowBackground">@drawable/bg_solid_corner_white_16px</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+    <!-- dialog弹窗样式带有圆角 -->
+    <style name="follow_car_dialog" parent="Base_AlertDialog">
+        <item name="windowFixedWidthMinor">80%</item>
+        <item name="windowFixedWidthMajor">80%</item>
+        <item name="android:windowBackground">@drawable/bg_solid_corner_white</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+
 </resources>

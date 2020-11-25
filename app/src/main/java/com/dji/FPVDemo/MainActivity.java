@@ -1,33 +1,19 @@
 package com.dji.FPVDemo;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.RectF;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
-import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
-import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
 import com.dji.FPVDemo.jni.NativeHelper;
-import com.dji.FPVDemo.tracking.FDSSTResultFormJNI;
-import com.dji.FPVDemo.tracking.KCFResultFormJNI;
-import com.dji.FPVDemo.utils.BorderedText;
+import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 import com.dji.FPVDemo.utils.CommonUtils;
+import com.dji.FPVDemo.utils.ImageUtils;
 import com.dji.FPVDemo.utils.LogUtil;
-import com.dji.FPVDemo.view.MultiBoxTracker;
-import com.dji.FPVDemo.view.OverlayView;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,16 +25,6 @@ import java.util.List;
  */
 public class MainActivity extends DJIMainActivity {
 
-    private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
-    private static final boolean TF_OD_API_IS_QUANTIZED = true;
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
-    private static final int TF_OD_API_INPUT_SIZE = 300;
-    private static final float TEXT_SIZE_DIP = 10;
-
-    private int widthDisplay;
-    private int heightDisplay;
-
     private static float canvasWidth = 0;
     private static float canvasHeight = 0;
 
@@ -57,68 +33,9 @@ public class MainActivity extends DJIMainActivity {
     private float dxCenterScreenObject;
     private float dyCenterScreenObject;
 
-    private ClassifierFromTensorFlow classifierFromTensorFlow;
-
-    // 画框
-    private MultiBoxTracker tracker;
-    private BorderedText borderedText;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getDisplaySize();
-
-        final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-        borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
-        tracker = new MultiBoxTracker(this);
-
-        try {
-            // create either a new ImageClassifierQuantizedMobileNet or an ImageClassifierFloatInception
-            classifierFromTensorFlow = TFLiteObjectDetectionAPIModel.create(getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED);
-        } catch (IOException e) {
-            Log.e("donfs", "Failed to initialize an image classifier.");
-
-        }
-
-        ovTrackingOverlay.addCallback(new OverlayView.DrawCallback() {
-            @Override
-            public void drawCallback(final Canvas canvas) {
-                tracker.draw(canvas);
-            }
-        });
-
-//        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
-        tracker.inputTrackingOverlayObject(ovTrackingOverlay);
-        tracker.setConfirmLocationForTensorFlow(new ConfirmLocationForTensorFlow() {
-            @Override
-            public void confirmForTracking(RectF rectFForFrame) {
-//                trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
-//                trackerType = TrackerType.USE_FDSST;
-                initTrackingAlgorithm(rectFForFrame);
-                stopBackgroundThreadForTensorFlow();
-                startBackgroundThreadForTracking();
-
-//                classifierFromTensorFlow.close();
-            }
-        });
-    }
-
-    /**
-     * 获取屏幕大小
-     */
-    private void getDisplaySize() {
-        WindowManager manager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        if (Build.VERSION.SDK_INT < 17) {
-            display.getSize(point);
-        } else {
-            display.getRealSize(point);
-        }
-        widthDisplay = point.x;
-        heightDisplay = point.y;
     }
 
     /**
@@ -140,10 +57,6 @@ public class MainActivity extends DJIMainActivity {
         } else {
             final List<ClassifierFromTensorFlow.Recognition> results = classifierFromTensorFlow.recognizeImage(bitmap);
 
-            canvasWidth = tvVideoPreviewer.getWidth();
-            canvasHeight = tvVideoPreviewer.getHeight();
-            ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
-            ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
             bitmap.recycle();
 
             final List<ClassifierFromTensorFlow.Recognition> mappedRecognitions = new LinkedList<ClassifierFromTensorFlow.Recognition>();
@@ -153,10 +66,10 @@ public class MainActivity extends DJIMainActivity {
 
                 if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
 
-                    RectF locationDisplay = new RectF(canvasWidth * location.left / TF_OD_API_INPUT_SIZE,
-                            canvasHeight * location.top / TF_OD_API_INPUT_SIZE,
-                            canvasWidth * location.right / TF_OD_API_INPUT_SIZE,
-                            canvasHeight * location.bottom / TF_OD_API_INPUT_SIZE);
+                    RectF locationDisplay = new RectF(tvVideoPreviewer.getWidth() * location.left / TF_OD_API_INPUT_SIZE,
+                            tvVideoPreviewer.getHeight() * location.top / TF_OD_API_INPUT_SIZE,
+                            tvVideoPreviewer.getWidth() * location.right / TF_OD_API_INPUT_SIZE,
+                            tvVideoPreviewer.getHeight() * location.bottom / TF_OD_API_INPUT_SIZE);
                     result.setLocation(locationDisplay);
                     mappedRecognitions.add(result);
                 }
@@ -172,6 +85,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForFDSST(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];
@@ -193,13 +107,6 @@ public class MainActivity extends DJIMainActivity {
      */
     @Override
     public void trackingForFDSST() {
-        canvasWidth = tvVideoPreviewer.getWidth();
-        canvasHeight = tvVideoPreviewer.getHeight();
-        ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
-        ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
-
-        final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(croppedBitmap);
 
         Bitmap bitmap = tvVideoPreviewer.getBitmap();
 
@@ -211,41 +118,14 @@ public class MainActivity extends DJIMainActivity {
             long start = System.currentTimeMillis();
 //            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-            FDSSTResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
+//            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
+            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
+
             bitmap.recycle();
 
-            dxCenterScreenObject = widthDisplay / 2 - result.x + result.width / 2;
-            dyCenterScreenObject = heightDisplay / 2 - result.y + result.height / 2;
-
-            controlValueIncX = (float) (dxCenterScreenObject * 0.0009f);
-            controlValueIncY = (float) (dyCenterScreenObject * 0.0009f);
-            flyControl((-1) * controlValueIncX, controlValueIncY, 0, 0);
-
-            StringBuffer sb = new StringBuffer();
-            LogUtil.addLineToSB(sb, "center_x: ", Math.round((result.x + result.width / 2) * 100) / 100);
-            LogUtil.addLineToSB(sb, "center_y: ", Math.round((result.y + result.height / 2) * 100) / 100);
-            LogUtil.addLineToSB(sb, "距离屏幕中心 x(px): ", Math.round((dxCenterScreenObject) * 100) / 100);
-            LogUtil.addLineToSB(sb, "距离屏幕中心 y(px): ", Math.round((dyCenterScreenObject) * 100) / 100);
-            LogUtil.addLineToSB(sb, "controlValueIncX: ", controlValueIncX);
-            LogUtil.addLineToSB(sb, "controlValueIncY: ", controlValueIncY);
-            setResultToText(sb.toString());
-            CommonUtils.showToast(MainActivity.this, "ms: " + (System.currentTimeMillis() - start));
             setFPS(1000 / (System.currentTimeMillis() - start));
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5.0f);
-            paint.setAntiAlias(true);
-
-            //            showToast(result.x + " " + result.y + " " + (result.width + result.x) + " " + (result.height + result.y));
-            canvas.drawRect(result.x, result.y, result.width + result.x, result.height + result.y, paint);
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
-            ivImageViewForFrame.post(new Runnable() {
-                @Override
-                public void run() {
-                    ivImageViewForFrame.setImageBitmap(croppedBitmap);
-                }
-            });
+            pictureFrame(result);
         }
     }
 
@@ -255,6 +135,7 @@ public class MainActivity extends DJIMainActivity {
      * @param rectFForFrame
      * @param bitmapForTracking
      */
+    @Override
     public void trackingInitForKCF(RectF rectFForFrame, Bitmap bitmapForTracking) {
         if (bitmapForTracking != null) {
 //            int[] pixels = new int[bitmapForTracking.getWidth() * bitmapForTracking.getHeight()];
@@ -279,13 +160,6 @@ public class MainActivity extends DJIMainActivity {
      */
     @Override
     public void trackingForKCF() {
-        canvasWidth = tvVideoPreviewer.getWidth();
-        canvasHeight = tvVideoPreviewer.getHeight();
-        ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
-        ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
-
-        final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(croppedBitmap);
 
         Bitmap bitmap = tvVideoPreviewer.getBitmap();
 
@@ -298,25 +172,80 @@ public class MainActivity extends DJIMainActivity {
             long start = System.currentTimeMillis();
 //            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-//            KCFResultFormJNI result = NativeHelper.getInstance().usingKcf(pixels, bitmap.getWidth(), bitmap.getHeight());
-            KCFResultFormJNI result = NativeHelper.getInstance().usingKcf(bitmap, bitmap.getWidth(), bitmap.getHeight());
+//            TrackingResultFormJNI result = NativeHelper.getInstance().usingKcf(pixels, bitmap.getWidth(), bitmap.getHeight());
+            TrackingResultFormJNI result = NativeHelper.getInstance().usingKcf(bitmap, bitmap.getWidth(), bitmap.getHeight());
             bitmap.recycle();
-            CommonUtils.showToast(MainActivity.this, "ms: " + (System.currentTimeMillis() - start));
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5.0f);
-            paint.setAntiAlias(true);
-
-//            showToast(result.x + " " + result.y + " " + (result.width + result.x) + " " + (result.height + result.y));
-            canvas.drawRect(result.x, result.y, result.width + result.x, result.height + result.y, paint);
-            writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
-            ivImageViewForFrame.post(new Runnable() {
-                @Override
-                public void run() {
-                    ivImageViewForFrame.setImageBitmap(croppedBitmap);
-                }
-            });
+            setFPS(1000 / (System.currentTimeMillis() - start));
+            pictureFrame(result);
         }
+    }
+
+    private void pictureFrame(TrackingResultFormJNI result) {
+        initCanvasAndImageView();
+
+        final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(croppedBitmap);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5.0f);
+        paint.setAntiAlias(true);
+
+        canvas.drawRect(result.x, result.y, result.width + result.x, result.height + result.y, paint);
+
+        ivImageViewForFrame.post(new Runnable() {
+            @Override
+            public void run() {
+                ivImageViewForFrame.setImageBitmap(croppedBitmap);
+            }
+        });
+    }
+
+    private void initCanvasAndImageView() {
+        canvasWidth = tvVideoPreviewer.getWidth();
+        canvasHeight = tvVideoPreviewer.getHeight();
+
+        if (tvVideoPreviewer.getWidth() != ivImageViewForFrame.getWidth() || tvVideoPreviewer.getHeight() != ivImageViewForFrame.getHeight()) {
+            canvasWidth = tvVideoPreviewer.getWidth();
+            canvasHeight = tvVideoPreviewer.getHeight();
+            ivImageViewForFrame.getLayoutParams().width = tvVideoPreviewer.getWidth();
+            ivImageViewForFrame.getLayoutParams().height = tvVideoPreviewer.getHeight();
+        }
+    }
+
+    private void clearFrame() {
+        initCanvasAndImageView();
+        final Bitmap croppedBitmap = Bitmap.createBitmap((int) canvasWidth, (int) canvasHeight, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(croppedBitmap);
+        ivImageViewForFrame.post(new Runnable() {
+            @Override
+            public void run() {
+                ivImageViewForFrame.setImageBitmap(croppedBitmap);
+            }
+        });
+    }
+
+    /**
+     * 控制飞行
+     *
+     * @param result
+     */
+    private void controlDroneFly(TrackingResultFormJNI result) {
+        dxCenterScreenObject = widthDisplay / 2 - result.x + result.width / 2;
+        dyCenterScreenObject = heightDisplay / 2 - result.y + result.height / 2;
+
+        controlValueIncX = (float) (dxCenterScreenObject * 0.0009f);
+        controlValueIncY = (float) (dyCenterScreenObject * 0.0009f);
+        flyControl((-1) * controlValueIncX, controlValueIncY, 0, 0);
+
+        StringBuffer sb = new StringBuffer();
+        LogUtil.addLineToSB(sb, "center_x: ", Math.round((result.x + result.width / 2) * 100) / 100);
+        LogUtil.addLineToSB(sb, "center_y: ", Math.round((result.y + result.height / 2) * 100) / 100);
+        LogUtil.addLineToSB(sb, "距离屏幕中心 x(px): ", Math.round((dxCenterScreenObject) * 100) / 100);
+        LogUtil.addLineToSB(sb, "距离屏幕中心 y(px): ", Math.round((dyCenterScreenObject) * 100) / 100);
+        LogUtil.addLineToSB(sb, "controlValueIncX: ", controlValueIncX);
+        LogUtil.addLineToSB(sb, "controlValueIncY: ", controlValueIncY);
+        setResultToText(sb.toString());
     }
 }
