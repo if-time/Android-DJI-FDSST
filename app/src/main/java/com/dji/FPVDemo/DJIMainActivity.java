@@ -667,7 +667,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             if (itemTrackingForTouchFrameView != null) {
                 itemTrackingForTouchFrameView.clearView();
             }
-
         }
     }
 

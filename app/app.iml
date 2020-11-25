@@ -223,5 +223,8 @@
     <orderEntry type="module" module-name="opcv430android" />
     <orderEntry type="module" module-name="opcv430android" />
     <orderEntry type="module" module-name="opcv430android" />
+    <orderEntry type="module" module-name="opcv430android" />
+    <orderEntry type="library" name="Gradle: org.apache.http.legacy-android-29" level="project" />
+    <orderEntry type="module" module-name="opcv430android" />
   </component>
 </module>
