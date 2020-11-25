@@ -22,9 +22,6 @@ public class TouchFrameView extends View {
 
     private ConfirmLocationForTracking confirmLocationForTracking;
 
-    private Bitmap mBitmap;
-    private Canvas mCanvas;
-
     private Paint mPaint;
 
     private RectF rectFForFrame;
@@ -58,14 +55,6 @@ public class TouchFrameView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
-    }
-
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(mBitmap);
     }
 
     @Override

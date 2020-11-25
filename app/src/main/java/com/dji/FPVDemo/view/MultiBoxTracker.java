@@ -18,12 +18,12 @@ package com.dji.FPVDemo.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.util.TypedValue;
@@ -40,6 +40,7 @@ import java.util.Queue;
 
 /**
  * A tracker that handles non-max suppression and matches existing objects to new detections.
+ *
  * @author dongsiyuan
  * @date 2020/11/13 23:55
  */
@@ -51,17 +52,13 @@ public class MultiBoxTracker {
             Color.parseColor("#AAAAFF"), Color.parseColor("#FFFFAA"),
             Color.parseColor("#55AAAA"), Color.parseColor("#AA33AA"),
             Color.parseColor("#0D0068")};
-    final List<Pair<Float, RectF>> screenRects = new LinkedList<Pair<Float, RectF>>();
+
     private final Queue<Integer> availableColors = new LinkedList<Integer>();
     private final List<TrackedRecognition> trackedObjects = new LinkedList<TrackedRecognition>();
     private final Paint boxPaint = new Paint();
     private final float textSizePx;
     private final BorderedText borderedText;
     private ConfirmLocationForTensorFlow confirmLocationForTensorFlow;
-    private Matrix frameToCanvasMatrix;
-    private int frameWidth;
-    private int frameHeight;
-    private int sensorOrientation;
 
     public MultiBoxTracker(final Context context) {
         for (final int color : COLORS) {
@@ -77,17 +74,7 @@ public class MultiBoxTracker {
 
         textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
         borderedText = new BorderedText(textSizePx);
-    }
-
-    public synchronized void setFrameConfiguration(final int width, final int height) {
-        frameWidth = width;
-        frameHeight = height;
-    }
-
-    public synchronized void setFrameConfiguration(final int width, final int height, final int sensorOrientation) {
-        frameWidth = width;
-        frameHeight = height;
-        this.sensorOrientation = sensorOrientation;
+        borderedText.setTypeface(Typeface.MONOSPACE);
     }
 
     public synchronized void trackResultsFromTensorFlow(final List<ClassifierFromTensorFlow.Recognition> results) {
@@ -101,18 +88,6 @@ public class MultiBoxTracker {
             if (result.getLocation() == null) {
                 continue;
             }
-//            final RectF detectionFrameRect = new RectF(result.getLocation());
-//
-//            final RectF detectionScreenRect = new RectF();
-//            rgbFrameToScreen.mapRect(detectionScreenRect, detectionFrameRect);
-//
-//            screenRects.add(new Pair<Float, RectF>(result.getConfidence(), detectionScreenRect));
-//
-//            if (detectionFrameRect.width() < MIN_SIZE || detectionFrameRect.height() < MIN_SIZE) {
-//
-//                continue;
-//            }
-
             rectsToTrack.add(new Pair<Float, ClassifierFromTensorFlow.Recognition>(result.getConfidence(), result));
         }
 
@@ -136,19 +111,20 @@ public class MultiBoxTracker {
     }
 
     public synchronized void draw(final Canvas canvas) {
-        for (final TrackedRecognition recognition : trackedObjects) {
-            final RectF trackedPos = new RectF(recognition.location);
+            for (final TrackedRecognition recognition : trackedObjects) {
+                final RectF trackedPos = new RectF(recognition.location);
 
-            boxPaint.setColor(recognition.color);
+                boxPaint.setColor(recognition.color);
 
-            float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
+                float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
 
-            canvas.drawRect(trackedPos, boxPaint);
+                canvas.drawRect(trackedPos, boxPaint);
 
-            final String labelString = !TextUtils.isEmpty(recognition.title) ?
-                    String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence)) : String.format("%.2f", (100 * recognition.detectionConfidence));
-            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
-        }
+                final String labelString = !TextUtils.isEmpty(recognition.title) ?
+                        String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence)) : String.format("%.2f", (100 * recognition.detectionConfidence));
+                borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+            }
+
     }
 
     public void inputTrackingOverlayObject(OverlayView ovTrackingOverlay) {
