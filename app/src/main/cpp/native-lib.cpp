@@ -584,3 +584,58 @@ Java_com_dji_FPVDemo_test_PictureConversionTestActivity_gray(JNIEnv *env,
     return result;
 
 }
+
+extern "C"
+JNIEXPORT jintArray JNICALL
+Java_com_dji_FPVDemo_test_imageopencv_PictureConversionTestActivity_gray(JNIEnv *env, jobject thiz,
+                                                                         jintArray pix_, jint w,
+                                                                         jint h) {
+    // TODO: implement gray()
+    jint *pix = env->GetIntArrayElements(pix_, NULL);
+    if (pix == NULL) {
+        return 0;
+    }
+#if 1
+    //将c++图片转成Opencv图片
+    Mat imgData(h, w, CV_8UC4, (unsigned char *) pix);
+    uchar *ptr = imgData.ptr(0);
+    for (int i = 0; i < w * h; i++) {
+        //计算公式：Y(亮度) = 0.299*R + 0.587*G + 0.114*B
+        //对于一个int四字节，其彩色值存储方式为：BGRA
+        int grayScale = (int) (ptr[4 * i + 2] * 0.299 + ptr[4 * i + 1] * 0.587 +
+                               ptr[4 * i + 0] * 0.114);
+        ptr[4 * i + 1] = grayScale;
+        ptr[4 * i + 2] = grayScale;
+        ptr[4 * i + 0] = grayScale;
+    }
+#endif
+    int size = w * h;
+    jintArray result = env->NewIntArray(size);
+    env->SetIntArrayRegion(result, 0, size, pix);
+    env->ReleaseIntArrayElements(pix_, pix, 0);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dji_FPVDemo_test_imageopencv_PictureConversionTestActivity_imwriter(JNIEnv *env,
+                                                                             jobject thiz,
+                                                                             jobject src_bitmap) {
+    // TODO: implement imwriter()
+    Mat frame;
+    BitmapToMat(env, src_bitmap, frame);//图片转化成mat
+    cvtColor(frame, frame, COLOR_BGRA2RGB);
+
+    __android_log_print(ANDROID_LOG_ERROR, "mat_jni",
+                        "frame.rows: %d, frame.cols: %d, frame.type(): %d",
+                        frame.rows, frame.cols, frame.type());
+
+    ostringstream oss;
+    oss << "/storage/emulated/0/result/readFdsstRectangle.jpg";
+    cout << oss.str() << endl;
+    bool iswrite = imwrite(oss.str(), frame);
+    __android_log_print(ANDROID_LOG_ERROR, "mat_jni",
+                        "iswrite: %d",
+                        iswrite);
+}

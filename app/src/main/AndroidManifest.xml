@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -34,11 +35,14 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity"></activity>
-        <activity android:name=".test.drawerlayout.DrawerLayoutActivity"></activity>
+        <activity android:name=".test.ncnn.ncnn4example.Ncnn4PhotoActivity"></activity>
+        <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity" />
+        <activity android:name=".test.drawerlayout.DrawerLayoutActivity" />
+        <activity android:name=".test.imageopencv.PictureConversionTestActivity" />
         <activity
             android:name=".test.drawerlayout.DrawerlayoutNaviMainActivity"
             android:label="@string/title_activity_drawerlayout_navi_main"

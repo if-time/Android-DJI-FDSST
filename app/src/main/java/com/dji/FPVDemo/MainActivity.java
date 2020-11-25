@@ -3,6 +3,7 @@ package com.dji.FPVDemo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -122,7 +123,6 @@ public class MainActivity extends DJIMainActivity {
             TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
 
             bitmap.recycle();
-
             setFPS(1000 / (System.currentTimeMillis() - start));
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
             pictureFrame(result);
