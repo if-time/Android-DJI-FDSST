@@ -28,10 +28,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dianping.logan.Logan;
 import com.dji.FPVDemo.customview.DetectionModelView;
 import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
+import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
+import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
 import com.dji.FPVDemo.enums.TrackerTypeEnum;
 import com.dji.FPVDemo.interf.AddOverlayView;
 import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
-import com.dji.FPVDemo.utils.BorderedText;
+import com.dji.FPVDemo.interf.SetRecognitionAlgorithm;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.DensityUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
@@ -42,6 +44,7 @@ import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.xcslideview.XCSlideView;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,6 +80,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     private static final String HANDLE_THREAD_DETECTION_NAME = "ThreadForTensorFlow";
     private static final String HANDLE_THREAD_TRACKING_NAME = "ThreadForTracking";
 
+    private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
+    private static final boolean TF_OD_API_IS_QUANTIZED = true;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+    public static final int TF_OD_API_INPUT_SIZE = 300;
+
     public int widthDisplay;
     public int heightDisplay;
 
@@ -102,9 +111,10 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     private final Object lockForTensorFlow = new Object();
 
+    public ClassifierFromTensorFlow classifierFromTensorFlow;
+
     // 画框
     public MultiBoxTracker tracker;
-    public BorderedText borderedText;
 
     private XCSlideView slideViewRightMoreSetting;
 
@@ -154,6 +164,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         setContentView(R.layout.activity_main_video_feeder);
         ButterKnife.bind(this);
 
+        tracker = new MultiBoxTracker(this);
+
         widthDisplay = DensityUtil.getScreenWidthAndHeight(this)[0];
         heightDisplay = DensityUtil.getScreenWidthAndHeight(this)[1];
 
@@ -180,6 +192,24 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 addOverlayView();
             }
         });
+        itemDetectionModelView.setRecognitionAlgorithmCallback(new SetRecognitionAlgorithm() {
+            @Override
+            public void initRecognitionAlgorithm(TrackerTypeEnum.TrackerType trackerType) {
+                switch (trackerType) {
+                    case USE_TENSORFLOW:
+                        try {
+                            // create either a new ImageClassifierQuantizedMobileNet or an ImageClassifierFloatInception
+                            classifierFromTensorFlow = TFLiteObjectDetectionAPIModel.create(getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED);
+                        } catch (IOException e) {
+                            Log.e("TensorFlow", "Failed to initialize an image classifier.");
+
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     private void initListener() {
@@ -198,6 +228,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 }
             }
         };
+
 
     }
 
@@ -425,7 +456,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             case USE_FDSST:
                 trackingForFDSST();
 //                showToast("trackingForFDSST");
-                removeOverlayView();
                 break;
             case USE_TENSORFLOW:
                 detectionForTensorFlow();
@@ -586,10 +616,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                     case 0:
                         trackingInitForKCF(rectFForFrame, bitmapForTracking);
                         TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_KCF;
+                        removeOverlayView();
                         break;
                     case 1:
                         trackingInitForFDSST(rectFForFrame, bitmapForTracking);
                         TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_FDSST;
+                        removeOverlayView();
                         break;
                     default:
                         break;
@@ -624,7 +656,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             if (TrackerTypeEnum.trackerType == TrackerTypeEnum.TrackerType.USE_TENSORFLOW) {
                 removeOverlayView();
             }
-
 
         } else {
 //            startBackgroundThreadForTensorFlow();
@@ -739,18 +770,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             }
         });
 
-//        tracker.setFrameConfiguration(widthDisplay, heightDisplay);
         tracker.inputTrackingOverlayObject(ovTrackingOverlay);
         tracker.setConfirmLocationForTensorFlow(new ConfirmLocationForTensorFlow() {
             @Override
             public void confirmForTracking(RectF rectFForFrame) {
-//                trackingInitForFDSST(rectFForFrame, tvVideoPreviewer.getBitmap());
-//                trackerType = TrackerTypeEnum.USE_FDSST;
                 initTrackingAlgorithm(rectFForFrame);
-
                 startBackgroundThreadForTracking();
-
-//                classifierFromTensorFlow.close();
             }
         });
 

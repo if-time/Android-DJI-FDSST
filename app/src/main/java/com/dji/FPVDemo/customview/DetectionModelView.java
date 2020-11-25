@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import com.dji.FPVDemo.R;
 import com.dji.FPVDemo.enums.TrackerTypeEnum;
 import com.dji.FPVDemo.interf.AddOverlayView;
+import com.dji.FPVDemo.interf.SetRecognitionAlgorithm;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
 import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
@@ -36,6 +37,8 @@ public class DetectionModelView extends CommonView {
     FragmentManager fragmentManager;
 
     private AddOverlayView addOverlayViewCallback;
+
+    private SetRecognitionAlgorithm setRecognitionAlgorithmCallback;
 
     public void initView(Context context, FragmentManager fragmentManager) {
         this.context = context;
@@ -62,7 +65,7 @@ public class DetectionModelView extends CommonView {
     @OnClick(R.id.btnSelect)
     public void selectDetectionModel() {
         String titleList = "选择哪种识别算法？";
-        final String[] languanges = new String[]{"TensorFlow", "TNN", "MNN"};
+        final String[] languanges = new String[]{"TensorFlow", "TNN", "NCNN"};
         DialogFragmentHelper.showListDialog(context, fragmentManager, titleList, languanges, new IDialogResultListener<Integer>() {
             @Override
             public void onDataResult(Integer result) {
@@ -71,6 +74,7 @@ public class DetectionModelView extends CommonView {
                     case 0:
                         TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_TENSORFLOW;
                         addOverlayViewCallback();
+                        initRecognitionAlgorithm(TrackerTypeEnum.trackerType);
                         break;
                     case 1:
                         TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_TNN;
@@ -86,8 +90,18 @@ public class DetectionModelView extends CommonView {
         this.addOverlayViewCallback = addOverlayViewCallback;
     }
 
+    /**
+     * 添加OverlayView
+     */
     public void addOverlayViewCallback() {
         addOverlayViewCallback.addOverlay();
     }
 
+    public void setRecognitionAlgorithmCallback(SetRecognitionAlgorithm setRecognitionAlgorithmCallback) {
+        this.setRecognitionAlgorithmCallback = setRecognitionAlgorithmCallback;
+    }
+
+    public void initRecognitionAlgorithm(TrackerTypeEnum.TrackerType trackerType) {
+        setRecognitionAlgorithmCallback.initRecognitionAlgorithm(trackerType);
+    }
 }

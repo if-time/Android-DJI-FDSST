@@ -23,6 +23,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.util.TypedValue;
@@ -73,6 +74,7 @@ public class MultiBoxTracker {
 
         textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
         borderedText = new BorderedText(textSizePx);
+        borderedText.setTypeface(Typeface.MONOSPACE);
     }
 
     public synchronized void trackResultsFromTensorFlow(final List<ClassifierFromTensorFlow.Recognition> results) {

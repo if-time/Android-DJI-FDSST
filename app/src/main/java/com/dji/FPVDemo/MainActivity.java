@@ -5,22 +5,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
-import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
 import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
-import com.dji.FPVDemo.utils.BorderedText;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.ImageUtils;
 import com.dji.FPVDemo.utils.LogUtil;
-import com.dji.FPVDemo.view.MultiBoxTracker;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,13 +25,6 @@ import java.util.List;
  */
 public class MainActivity extends DJIMainActivity {
 
-    private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
-    private static final boolean TF_OD_API_IS_QUANTIZED = true;
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
-    private static final int TF_OD_API_INPUT_SIZE = 300;
-    private static final float TEXT_SIZE_DIP = 10;
-
     private static float canvasWidth = 0;
     private static float canvasHeight = 0;
 
@@ -47,24 +33,9 @@ public class MainActivity extends DJIMainActivity {
     private float dxCenterScreenObject;
     private float dyCenterScreenObject;
 
-    private ClassifierFromTensorFlow classifierFromTensorFlow;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-        borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
-        tracker = new MultiBoxTracker(this);
-
-        try {
-            // create either a new ImageClassifierQuantizedMobileNet or an ImageClassifierFloatInception
-            classifierFromTensorFlow = TFLiteObjectDetectionAPIModel.create(getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE, TF_OD_API_IS_QUANTIZED);
-        } catch (IOException e) {
-            Log.e("donfs", "Failed to initialize an image classifier.");
-
-        }
     }
 
     /**
@@ -147,8 +118,7 @@ public class MainActivity extends DJIMainActivity {
             long start = System.currentTimeMillis();
 //            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-//            FDSSTResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
-
+//            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
             TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
 
             bitmap.recycle();
