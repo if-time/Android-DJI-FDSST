@@ -37,6 +37,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity"></activity>
         <activity android:name=".test.drawerlayout.DrawerLayoutActivity"></activity>
         <activity
             android:name=".test.drawerlayout.DrawerlayoutNaviMainActivity"

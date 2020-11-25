@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/height_15"
+        android:layout_marginTop="@dimen/height_15"
+        android:text="选择追踪目标"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnAddView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginStart="@dimen/height_15"
+        android:layout_marginTop="@dimen/height_15"
+        android:background="@drawable/bg_solid_corner_blue"
+        android:text="画框"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnRemoveView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginStart="@dimen/height_55"
+        android:layout_marginTop="@dimen/height_15"
+        android:layout_toRightOf="@+id/btnAddView"
+        android:background="@drawable/bg_solid_corner_blue"
+        android:enabled="false"
+        android:text="清除"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

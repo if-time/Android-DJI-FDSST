@@ -18,12 +18,9 @@ import com.dji.FPVDemo.interf.ConfirmLocationForTracking;
  * @author dongsiyuan
  * @date 2020年10月29日
  */
-public class TouchPaintView extends View {
+public class TouchFrameView extends View {
 
     private ConfirmLocationForTracking confirmLocationForTracking;
-
-    private Bitmap mBitmap;
-    private Canvas mCanvas;
 
     private Paint mPaint;
 
@@ -34,17 +31,17 @@ public class TouchPaintView extends View {
 
     private boolean isNeedFrame = true;
 
-    public TouchPaintView(Context context, AttributeSet attrs, int defStyle) {
+    public TouchFrameView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
-    public TouchPaintView(Context context, AttributeSet attrs) {
+    public TouchFrameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TouchPaintView(Context context) {
+    public TouchFrameView(Context context) {
         super(context);
         init();
     }
@@ -58,14 +55,6 @@ public class TouchPaintView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(12);
-    }
-
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(mBitmap);
     }
 
     @Override

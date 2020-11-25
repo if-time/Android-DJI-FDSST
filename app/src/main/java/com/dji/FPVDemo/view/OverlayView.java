@@ -17,8 +17,14 @@ package com.dji.FPVDemo.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+
+import com.dji.FPVDemo.interf.ConfirmTouchForOverlayView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +33,9 @@ import java.util.List;
  * A simple View providing a render callback to other classes.
  */
 public class OverlayView extends View {
+
+    private ConfirmTouchForOverlayView confirmTouchForOverlayView;
+
     private final List<DrawCallback> callbacks = new LinkedList<DrawCallback>();
 
     public OverlayView(final Context context, final AttributeSet attrs) {
@@ -38,11 +47,41 @@ public class OverlayView extends View {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // 获取点击屏幕时的点的坐标
+        float x = event.getX();
+        float y = event.getY();
+        whichFrame(x, y);
+        return super.onTouchEvent(event);
+    }
+
+    @Override
     public synchronized void draw(final Canvas canvas) {
         super.draw(canvas);
         for (final DrawCallback callback : callbacks) {
             callback.drawCallback(canvas);
         }
+    }
+
+    /**
+     * 确定点击的点在哪个
+     *
+     * @param x
+     * @param y
+     */
+    private void whichFrame(float x, float y) {
+        confirmForOverlayView(x, y);
+    }
+
+    public void setConfirmTouchForOverlayView(ConfirmTouchForOverlayView confirmTouchForOverlayView) {
+        this.confirmTouchForOverlayView = confirmTouchForOverlayView;
+    }
+
+    /**
+     * 返回MultiBoxTracker
+     */
+    public void confirmForOverlayView(float x, float y) {
+        confirmTouchForOverlayView.confirmForOverlayView(x, y);
     }
 
     /**

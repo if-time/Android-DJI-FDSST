@@ -53,15 +53,8 @@ public class CustomSideSlipMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (!mSlideViewLeft.isShow())
+                if (!mSlideViewLeft.isShow()) {
                     mSlideViewLeft.show();
-            }
-        });
-        menuViewLeft.findViewById(R.id.ivBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mSlideViewLeft.isShow()) {
-                    mSlideViewLeft.dismiss();
                 }
             }
         });

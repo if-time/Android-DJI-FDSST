@@ -16,49 +16,86 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.dji.FPVDemo.view.TouchPaintView
-        android:id="@+id/tpvTouchFrame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/ivImageViewForFrame"
+    <!--添加View的容器-->
+    <LinearLayout
+        android:id="@+id/llViewForFrameContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivImageViewForFrame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llOverlayViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:orientation="horizontal" />
 
-    <com.dji.FPVDemo.view.OverlayView
-        android:id="@+id/ovTrackingOverlay"
+    <!--添加TouchFrameView的容器-->
+    <LinearLayout
+        android:id="@+id/llTouchFrameViewContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
 
     <TextView
         android:id="@+id/tvFPS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:text="60"
+        android:layout_marginStart="@dimen/height_20"
+        android:layout_marginTop="@dimen/height_20"
         android:textColor="@color/red"
-        android:textSize="21sp" />
+        android:textSize="@dimen/font_20sp" />
 
     <ImageView
-        android:id="@+id/ivSimulatorSetting"
+        android:id="@+id/ivMoreSetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llBtns"
-        android:layout_marginTop="12dp"
-        android:src="@mipmap/ic_remote_control"
-        android:visibility="visible" />
-
-    <ImageButton
-        android:id="@+id/ivTrackingDrawerControlIb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="210dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:background="#ff000000"
-        android:src="@mipmap/ic_sliding_drawer"
-        android:visibility="visible" />
+        android:src="@mipmap/ic_more_setting" />
+
+    <LinearLayout
+        android:id="@+id/llBtns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/height_50"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivBackgroundThread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/height_20"
+            android:src="@mipmap/ic_detect_close" />
+
+        <ImageView
+            android:id="@+id/ivSimulatorSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/height_20"
+            android:layout_marginTop="@dimen/height_15"
+            android:src="@mipmap/ic_remote_control" />
+
+        <ImageButton
+            android:id="@+id/ivTrackingDrawerControlIb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/height_20"
+            android:layout_marginTop="@dimen/height_15"
+            android:background="#ff000000"
+            android:src="@mipmap/ic_sliding_drawer"
+            android:visibility="invisible" />
+
+    </LinearLayout>
 
     <SlidingDrawer
         android:id="@+id/sdTrackingDrawer"
@@ -109,31 +146,6 @@
         </RelativeLayout>
 
     </SlidingDrawer>
-
-    <LinearLayout
-        android:id="@+id/llBtns"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnThermalCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/CameraCapturePanel"
-            android:layout_marginEnd="10dp"
-            android:text="红外" />
-
-        <Button
-            android:id="@+id/btnBackgroundThread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/CameraCapturePanel"
-            android:layout_marginEnd="10dp"
-            android:text="检测" />
-
-    </LinearLayout>
 
 </RelativeLayout>
 

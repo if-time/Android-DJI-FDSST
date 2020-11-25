@@ -10,6 +10,9 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/tracking/tracker.hpp>
 #include <opencv2/opencv.hpp>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "trackingTargetForFDSST.cpp"
 
 using namespace cv;
@@ -48,6 +51,8 @@ struct URLProtocol;
 //}
 
 void BitmapToMat2(JNIEnv *env, jobject &bitmap, Mat &mat, jboolean needUnPremultiplyAlpha);
+
+void writeImage(const Mat &frame);
 
 /**
  * Invoke the java callback method
@@ -300,8 +305,10 @@ int countKcf = 0;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_dji_FPVDemo_jni_NativeHelper_initKcf(JNIEnv *env, jobject thiz, jobject src_bitmap, jfloat left, jfloat top,
-        jfloat right, jfloat bottom,  jint width, jint height) {
+Java_com_dji_FPVDemo_jni_NativeHelper_initKcf(JNIEnv *env, jobject thiz, jobject src_bitmap,
+                                              jfloat left, jfloat top,
+                                              jfloat right, jfloat bottom, jint width,
+                                              jint height) {
     // TODO: implement initKcf()
     LOGE("tracker initing in JNI...");
 
@@ -329,12 +336,12 @@ Java_com_dji_FPVDemo_jni_NativeHelper_initKcf(JNIEnv *env, jobject thiz, jobject
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_dji_FPVDemo_jni_NativeHelper_usingKcf(JNIEnv *env, jobject thiz,
-                                                                      jobject src_bitmap,
-                                                                      jint width, jint height) {
+                                               jobject src_bitmap,
+                                               jint width, jint height) {
     // TODO: implement usingKcf()
 
     jclass cSructInfo = env->FindClass(
-            "com/dji/FPVDemo/tracking/KCFResultFormJNI");
+            "com/dji/FPVDemo/tracking/TrackingResultFormJNI");
     jfieldID cXLoc = env->GetFieldID(cSructInfo, "x", "I");
     jfieldID cYLoc = env->GetFieldID(cSructInfo, "y", "I");
     jfieldID cWidthLoc = env->GetFieldID(cSructInfo, "width", "I");
@@ -399,11 +406,11 @@ FDSSTTracker trackerForF(HOG, FIXEDWINDOW, MULTISCALE, LAB);
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_dji_FPVDemo_jni_NativeHelper_initFdsst(JNIEnv *env, jobject thiz,
-                                                                       jobject src_bitmap,
-                                                                       jfloat left, jfloat top,
-                                                                       jfloat right, jfloat bottom,
-                                                                       jint width,
-                                                                       jint height) {
+                                                jobject src_bitmap,
+                                                jfloat left, jfloat top,
+                                                jfloat right, jfloat bottom,
+                                                jint width,
+                                                jint height) {
     // TODO: implement initFdsst()
     LOGE("tracker initing in JNI...");
 
@@ -421,8 +428,8 @@ Java_com_dji_FPVDemo_jni_NativeHelper_initFdsst(JNIEnv *env, jobject thiz,
     bboxForF.width = right - left;
     bboxForF.height = bottom - top;
     rectangle(frame, bboxForF, Scalar(255, 0, 0), 2, 1);
-//
-//    ("/storage/emulated/0/result/readYuvfdsst.jpg", frame);
+
+    imwrite("/storage/emulated/0/result/readYuvfdsst.jpg", frame);
     //跟踪器初始化
     cvtColor(frame, dst, CV_BGR2GRAY);
     trackerForF.init(bboxForF, dst);
@@ -431,12 +438,12 @@ Java_com_dji_FPVDemo_jni_NativeHelper_initFdsst(JNIEnv *env, jobject thiz,
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsst(JNIEnv *env, jobject thiz,
-                                                                        jobject src_bitmap,
-                                                                        jint width, jint height) {
+                                                 jobject src_bitmap,
+                                                 jint width, jint height) {
     // TODO: implement usingFdsst()
 
     jclass cSructInfo = env->FindClass(
-            "com/dji/FPVDemo/tracking/FDSSTResultFormJNI");
+            "com/dji/FPVDemo/tracking/TrackingResultFormJNI");
     jfieldID cXLoc = env->GetFieldID(cSructInfo, "x", "I");
     jfieldID cYLoc = env->GetFieldID(cSructInfo, "y", "I");
     jfieldID cWidthLoc = env->GetFieldID(cSructInfo, "width", "I");
@@ -471,18 +478,86 @@ Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsst(JNIEnv *env, jobject thiz,
 //    cout << oss.str() << endl;
 //    imwrite(oss.str(), frame);
 
+
+//    writeImage(frame);
+
     return oStructInfo;
 }
-/**********************************************FDSST*****************************************************/extern "C"
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsstMat(JNIEnv *env, jobject thiz, jlong mat_address,
+                                                    jint width, jint height) {
+    // TODO: implement usingFdsstMat()
+
+    jclass cSructInfo = env->FindClass(
+            "com/dji/FPVDemo/tracking/TrackingResultFormJNI");
+    jfieldID cXLoc = env->GetFieldID(cSructInfo, "x", "I");
+    jfieldID cYLoc = env->GetFieldID(cSructInfo, "y", "I");
+    jfieldID cWidthLoc = env->GetFieldID(cSructInfo, "width", "I");
+    jfieldID cHeightLoc = env->GetFieldID(cSructInfo, "height", "I");
+    //新建Jni类对象
+    jobject oStructInfo = env->AllocObject(cSructInfo);
+
+    Mat &frame = *(Mat *) mat_address;
+
+    __android_log_print(ANDROID_LOG_ERROR, "mat_jni",
+                        "frame.rows: %d, frame.cols: %d, frame.type(): %d",
+                        frame.rows, frame.cols, frame.type());
+
+    cvtColor(frame, dst, CV_RGB2GRAY);
+    bboxForF = trackerForF.update(dst);
+
+    LOGE("update is finish,status is ok.");
+    int bboxx = bboxForF.x;
+    int bboxy = bboxForF.y;
+    int bboxwidth = bboxForF.width;
+    int bboxheight = bboxForF.height;
+    env->SetIntField(oStructInfo, cXLoc, bboxx);
+    env->SetIntField(oStructInfo, cYLoc, bboxy);
+    env->SetIntField(oStructInfo, cWidthLoc, bboxwidth);
+    env->SetIntField(oStructInfo, cHeightLoc, bboxheight);
+
+//    ostringstream oss;
+//    oss << "/storage/emulated/0/result/readFdsstRectangle" << countFdsst++ << ".jpg";
+//    cout << oss.str() << endl;
+//    imwrite(oss.str(), frame);
+
+
+//    writeImage(frame);
+
+    return oStructInfo;
+
+}
+
+/**********************************************FDSST*****************************************************/
+
+void writeImage(const Mat &frame) {
+    char p_str[128] = "/storage/emulated/0/ResultForFDSST/";
+    if (0 == access(p_str, 0)) {
+        printf("[ %s ] live !", p_str);
+    } else {
+        if (0 == mkdir(p_str, 777)) {
+            printf("[ %s ] mkdir success !", p_str);
+        } else {
+            printf("[ %s ] mkdir error !", p_str);
+        }
+    }
+
+    const int len = strlen(p_str);
+    sprintf(p_str + len, "cv_mat_%lf_ms_%dx%d.jpg", getTickCount() * 1000. / getTickFrequency(),
+            frame.cols, frame.rows);
+    imwrite(p_str, frame);
+}
 
 /**********************************************TEST*****************************************************/
 extern "C"
 JNIEXPORT jintArray JNICALL
 Java_com_dji_FPVDemo_test_PictureConversionTestActivity_gray(JNIEnv *env,
-                                                                                    jobject thiz,
-                                                                                    jintArray pix_,
-                                                                                    jint w,
-                                                                                    jint h) {
+                                                             jobject thiz,
+                                                             jintArray pix_,
+                                                             jint w,
+                                                             jint h) {
     // TODO: implement gray()
     jint *pix = env->GetIntArrayElements(pix_, NULL);
     if (pix == NULL) {

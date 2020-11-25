@@ -210,5 +210,6 @@ public class TFLiteObjectDetectionAPIModel implements ClassifierFromTensorFlow {
     @Override
     public void close() {
         tfLite.close();
+        tfLite = null;
     }
 }
