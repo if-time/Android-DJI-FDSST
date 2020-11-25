@@ -54,9 +54,11 @@ public class ImageUtils {
      * @return
      */
     public static Mat getMatForBitmap(Bitmap bitmap) {
+//        Mat mat = new Mat(bitmap.getWidth(), bitmap.getHeight(), Imgproc.COLOR_BGRA2BGR);
         Mat mat = new Mat();
         Bitmap bmp32 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(bmp32, mat);
+//        Log.i("ncnnopencv", "getMatForBitmap: " + mat.type());
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
         bmp32.recycle();
         return mat;

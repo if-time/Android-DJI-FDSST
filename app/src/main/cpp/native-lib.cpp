@@ -525,7 +525,7 @@ Java_com_dji_FPVDemo_jni_NativeHelper_usingFdsstMat(JNIEnv *env, jobject thiz, j
 
 
 //    writeImage(frame);
-
+//    frame.release();
     return oStructInfo;
 
 }

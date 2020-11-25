@@ -12,8 +12,11 @@ import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 import com.dji.FPVDemo.utils.CommonUtils;
-import com.dji.FPVDemo.utils.ImageUtils;
 import com.dji.FPVDemo.utils.LogUtil;
+
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -120,9 +123,16 @@ public class MainActivity extends DJIMainActivity {
 //            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 //            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
-            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
+//            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
 
+            Mat mat = new Mat();
+            Bitmap bmpCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            Utils.bitmapToMat(bmpCopy, mat);
+            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
+            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(mat.getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
+            bmpCopy.recycle();
             bitmap.recycle();
+            mat.release();
             setFPS(1000 / (System.currentTimeMillis() - start));
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
             pictureFrame(result);
