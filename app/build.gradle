@@ -27,7 +27,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14"
-                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
+                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang", "-DANDROID_STL=c++_shared"
             }
             ndk {
                 // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
@@ -84,7 +84,8 @@ android {
         // exclude 排除
         exclude 'META-INF/rxjava.properties'
         // pickFirst 使用第一个
-        pickFirst 'lib/armeabi-v7a/libopencv_java4.so'
+//        pickFirst 'lib/armeabi-v7a/libopencv_java4.so'
+//        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
     }
     sourceSets {
         main {
@@ -157,8 +158,9 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
 
     // crash
     implementation 'com.zxy.android:recovery:1.0.0'
+
     implementation project(path: ':ncnnlibrary')
-    implementation project(path: ':opcv430android')
+    implementation project(path: ':opencv430android')
 
 }
 
