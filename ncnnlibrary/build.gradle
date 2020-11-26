@@ -15,13 +15,13 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++14"
+                cppFlags "-std=c++14 -fopenmp"
                 abiFilters "armeabi-v7a"
-                arguments '-DANDROID_PLATFORM=android-22', '-DANDROID_STL=c++_static', '-DANDROID_STL=c++_shared',
-                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
+                arguments '-DANDROID_PLATFORM=android-24', '-DANDROID_STL=c++_static', '-DANDROID_STL=c++_shared'
             }
         }
     }
+//    , -DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
 
     buildTypes {
         release {

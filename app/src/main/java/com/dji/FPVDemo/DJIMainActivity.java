@@ -45,6 +45,7 @@ import com.dji.FPVDemo.view.xcslideview.XCSlideView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -93,6 +94,11 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     private boolean runDetectionForTensorFlow = false;
     // 虚拟摇杆默认是关闭的
     private boolean isSimulator = false;
+
+    public AtomicBoolean detectNcnn = new AtomicBoolean(false);
+    public AtomicBoolean detectTensorFlow = new AtomicBoolean(false);
+    public AtomicBoolean trackingKcf = new AtomicBoolean(false);
+    public AtomicBoolean trackingFdsst = new AtomicBoolean(false);
 
     private FlightController mFlightController;
 
@@ -205,6 +211,10 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
                         }
                         break;
+                    case USE_NCNN:
+                        CommonUtils.showToast(DJIMainActivity.this, trackerType.toString());
+                        initForNcnn();
+                        break;
                     default:
                         break;
                 }
@@ -263,6 +273,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     @Override
     protected void onDestroy() {
         uninitPreviewer();
+        detectNcnn.set(false);
+        detectTensorFlow.set(false);
         // 关闭虚拟摇杆
         if (mFlightController != null) {
             mFlightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
@@ -459,6 +471,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 break;
             case USE_TENSORFLOW:
                 detectionForTensorFlow();
+                break;
+            case USE_NCNN:
+                detectionForNcnn();
                 break;
             default:
                 break;
@@ -796,4 +811,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     protected abstract void trackingForFDSST();
 
     protected abstract void detectionForTensorFlow();
+
+    protected abstract void initForNcnn();
+
+    protected abstract void detectionForNcnn();
 }

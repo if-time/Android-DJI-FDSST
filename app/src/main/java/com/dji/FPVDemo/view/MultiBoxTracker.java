@@ -33,6 +33,7 @@ import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
 import com.dji.FPVDemo.interf.ConfirmTouchForOverlayView;
 import com.dji.FPVDemo.utils.BorderedText;
+import com.example.ncnnlibrary.Box;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +78,39 @@ public class MultiBoxTracker {
         borderedText.setTypeface(Typeface.MONOSPACE);
     }
 
+    public synchronized void trackResultsFromNcnn(final List<Box> results) {
+        processResultsFromNcnn(results);
+    }
+
+    private void processResultsFromNcnn(final List<Box> results) {
+        final List<Pair<Float, Box>> rectsToTrack = new LinkedList<Pair<Float, Box>>();
+
+        for (final Box result : results) {
+            if (result.getRect() == null) {
+                continue;
+            }
+            rectsToTrack.add(new Pair<Float, Box>(result.getScore(), result));
+        }
+
+        trackedObjects.clear();
+        if (rectsToTrack.isEmpty()) {
+            return;
+        }
+
+        for (final Pair<Float, Box> potential : rectsToTrack) {
+            final TrackedRecognition trackedRecognition = new TrackedRecognition();
+            trackedRecognition.detectionConfidence = potential.first;
+            trackedRecognition.location = new RectF(potential.second.getRect());
+            trackedRecognition.title = potential.second.getLabel();
+            trackedRecognition.color = COLORS[trackedObjects.size()];
+            trackedObjects.add(trackedRecognition);
+
+            if (trackedObjects.size() >= COLORS.length) {
+                break;
+            }
+        }
+    }
+
     public synchronized void trackResultsFromTensorFlow(final List<ClassifierFromTensorFlow.Recognition> results) {
         processResultsFromTensorFlow(results);
     }
@@ -111,19 +145,19 @@ public class MultiBoxTracker {
     }
 
     public synchronized void draw(final Canvas canvas) {
-            for (final TrackedRecognition recognition : trackedObjects) {
-                final RectF trackedPos = new RectF(recognition.location);
+        for (final TrackedRecognition recognition : trackedObjects) {
+            final RectF trackedPos = new RectF(recognition.location);
 
-                boxPaint.setColor(recognition.color);
+            boxPaint.setColor(recognition.color);
 
-                float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
+            float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
 
-                canvas.drawRect(trackedPos, boxPaint);
+            canvas.drawRect(trackedPos, boxPaint);
 
-                final String labelString = !TextUtils.isEmpty(recognition.title) ?
-                        String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence)) : String.format("%.2f", (100 * recognition.detectionConfidence));
-                borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
-            }
+            final String labelString = !TextUtils.isEmpty(recognition.title) ?
+                    String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence)) : String.format("%.2f", (100 * recognition.detectionConfidence));
+            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+        }
 
     }
 

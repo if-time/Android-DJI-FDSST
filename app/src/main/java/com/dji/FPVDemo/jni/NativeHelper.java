@@ -10,7 +10,7 @@ import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 public class NativeHelper {
 
     static{
-        System.loadLibrary("native-lib");
+        System.loadLibrary("app-lib");
     }
 
     public static final String TAG = NativeHelper.class.getSimpleName();

@@ -13,6 +13,8 @@ import com.dji.FPVDemo.jni.NativeHelper;
 import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.LogUtil;
+import com.example.ncnnlibrary.Box;
+import com.example.ncnnlibrary.NcnnJni;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -59,6 +61,11 @@ public class MainActivity extends DJIMainActivity {
             CommonUtils.showToast(MainActivity.this, "bitmap == null");
             return;
         } else {
+            if (detectTensorFlow.get()) {
+                return;
+            }
+            detectTensorFlow.set(true);
+            long start = System.currentTimeMillis();
             final List<ClassifierFromTensorFlow.Recognition> results = classifierFromTensorFlow.recognizeImage(bitmap);
 
             bitmap.recycle();
@@ -78,8 +85,10 @@ public class MainActivity extends DJIMainActivity {
                     mappedRecognitions.add(result);
                 }
             }
+            detectTensorFlow.set(false);
             tracker.trackResultsFromTensorFlow(mappedRecognitions);
             ovTrackingOverlay.postInvalidate();
+            setFPS(1000 / (System.currentTimeMillis() - start));
         }
     }
 
@@ -119,23 +128,66 @@ public class MainActivity extends DJIMainActivity {
             return;
         } else {
             // 获取到识别出的位置并画框
+            if (trackingFdsst.get()) {
+                return;
+            }
+            trackingFdsst.set(true);
             long start = System.currentTimeMillis();
 //            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 //            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-//            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
+
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            Matrix matrix = new Matrix();
+            matrix.postScale(0.5f, 0.5f);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsst(bitmap, bitmap.getWidth(), bitmap.getHeight());
+
 //            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(ImageUtils.getMatForBitmap(bitmap).getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
 
-            Mat mat = new Mat();
-            Bitmap bmpCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-            Utils.bitmapToMat(bmpCopy, mat);
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
-            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(mat.getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
-            bmpCopy.recycle();
+//            Mat mat = new Mat();
+//            Bitmap bmpCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+//            Utils.bitmapToMat(bmpCopy, mat);
+//            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGRA2BGR);
+//            TrackingResultFormJNI result = NativeHelper.getInstance().usingFdsstMat(mat.getNativeObjAddr(), bitmap.getWidth(), bitmap.getHeight());
+//            bmpCopy.recycle();
+//            mat.release();
             bitmap.recycle();
-            mat.release();
+            trackingFdsst.set(false);
             setFPS(1000 / (System.currentTimeMillis() - start));
             writeAprilTagsStatus(result.x, result.y, result.width + result.x, result.height + result.y);
             pictureFrame(result);
+        }
+    }
+
+    @Override
+    protected void initForNcnn() {
+        NcnnJni.getInstance().initNcnn(getAssets(), true, false);
+    }
+
+    @Override
+    protected void detectionForNcnn() {
+        if (detectNcnn.get()) {
+            return;
+        }
+        detectNcnn.set(true);
+        Bitmap bitmap = tvVideoPreviewer.getBitmap();
+        if (bitmap != null) {
+            long start = System.currentTimeMillis();
+            Box[] results = NcnnJni.getInstance().detectForNcnn(bitmap);
+            bitmap.recycle();
+            final List<Box> mappedRecognitions = new LinkedList<>();
+            for (Box box : results) {
+                final RectF location = box.getRect();
+
+                if (location != null && box.getScore() >= MINIMUM_CONFIDENCE_TF_OD_API) {
+                    mappedRecognitions.add(box);
+                }
+            }
+            detectNcnn.set(false);
+            setFPS(1000 / (System.currentTimeMillis() - start));
+            tracker.trackResultsFromNcnn(mappedRecognitions);
+            ovTrackingOverlay.postInvalidate();
         }
     }
 

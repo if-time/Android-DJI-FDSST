@@ -38,6 +38,7 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:largeHeap="true"
         android:usesCleartextTraffic="true">
         <activity android:name=".test.ncnn.ncnn4example.Ncnn4PhotoActivity"></activity>
         <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity" />

@@ -124,7 +124,7 @@ class CV_EXPORTS_W CharucoBoard : public Board {
     // size of chessboard squares side (normally in meters)
     float _squareLength;
 
-    // marker side lenght (normally in meters)
+    // marker side length (normally in meters)
     float _markerLength;
 };
 
@@ -184,8 +184,8 @@ CV_EXPORTS_W int interpolateCornersCharuco(InputArrayOfArrays markerCorners, Inp
  */
 CV_EXPORTS_W bool estimatePoseCharucoBoard(InputArray charucoCorners, InputArray charucoIds,
                                            const Ptr<CharucoBoard> &board, InputArray cameraMatrix,
-                                           InputArray distCoeffs, OutputArray rvec, OutputArray tvec,
-                                           bool useExtrinsicGuess = false);
+                                           InputArray distCoeffs, InputOutputArray rvec,
+                                           InputOutputArray tvec, bool useExtrinsicGuess = false);
 
 
 

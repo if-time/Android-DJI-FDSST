@@ -8,7 +8,7 @@ package com.dji.FPVDemo.enums;
  */
 public class TrackerTypeEnum {
 
-    public enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW, USE_TNN}
+    public enum TrackerType {USE_KCF, USE_FDSST, USE_TENSORFLOW, USE_TNN, USE_NCNN}
 
     public static TrackerType trackerType = TrackerType.USE_TENSORFLOW;
 }

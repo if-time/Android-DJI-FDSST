@@ -77,7 +77,11 @@ public class DetectionModelView extends CommonView {
                         initRecognitionAlgorithm(TrackerTypeEnum.trackerType);
                         break;
                     case 1:
-                        TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_TNN;
+                        break;
+                    case 2:
+                        TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_NCNN;
+                        addOverlayViewCallback();
+                        initRecognitionAlgorithm(TrackerTypeEnum.trackerType);
                         break;
                     default:
                         break;

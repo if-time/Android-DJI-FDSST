@@ -25,7 +25,7 @@
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/build/generated/res/rs/debug;file://$MODULE_DIR$/build/generated/res/resValues/debug" />
-        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="" />
+        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/build/generated/res/rs/androidTest/debug" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
       </configuration>
     </facet>
@@ -220,9 +220,9 @@
     <orderEntry type="library" name="Gradle: com.dianping.android.sdk:logan:1.2.4@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.zxy.android:recovery:1.0.0@aar" level="project" />
     <orderEntry type="module" module-name="ncnnlibrary" />
-    <orderEntry type="module" module-name="opcv430android" />
+    <orderEntry type="module" module-name="opencv430android" />
     <orderEntry type="library" name="Gradle: org.apache.http.legacy-android-29" level="project" />
     <orderEntry type="module" module-name="ncnnlibrary" />
-    <orderEntry type="module" module-name="opcv430android" />
+    <orderEntry type="module" module-name="opencv430android" />
   </component>
 </module>
