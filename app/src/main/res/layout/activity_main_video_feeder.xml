@@ -93,7 +93,7 @@
             android:layout_marginTop="@dimen/height_15"
             android:background="#ff000000"
             android:src="@mipmap/ic_sliding_drawer"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
     </LinearLayout>
 

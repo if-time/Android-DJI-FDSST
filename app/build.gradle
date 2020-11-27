@@ -81,6 +81,8 @@ android {
         doNotStrip "*/*/libDJIUpgradeCore.so"
         doNotStrip "*/*/libDJIUpgradeJNI.so"
         exclude 'META-INF/rxjava.properties'
+        pickFirst "lib/armeabi-v7a/libc++_shared.so"
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
     }
     sourceSets {
         main {
@@ -151,6 +153,7 @@ dependencies {//一共有三种依赖方式，本地依赖，库依赖，远程�
 
     // crash
     implementation 'com.zxy.android:recovery:1.0.0'
+    implementation project(path: ':tnnlibrary')
 }
 
 // Please uncomment the following code if you use your own sdk version.
