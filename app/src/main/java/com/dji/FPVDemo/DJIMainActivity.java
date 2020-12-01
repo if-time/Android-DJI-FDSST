@@ -210,7 +210,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                             Log.e("TensorFlow", "Failed to initialize an image classifier.");
 
                         }
-                    case USE_TNN:
+                    case USE_TNN_FOR_CLASSIFY:
                         // 加载模型和标签
                         classNames = Utils.ReadListFromFile(getAssets(), "label_list.txt");
                         String protoContent = getCacheDir().getAbsolutePath() + File.separator + "squeezenet_v1.1.tnnproto";
@@ -487,8 +487,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             case USE_TENSORFLOW:
                 detectionForTensorFlow();
                 break;
-            case USE_TNN:
-                detectionForTNN();
+            case USE_TNN_FOR_CLASSIFY:
+                imageClassifyForTNN();
             default:
                 break;
         }
@@ -826,5 +826,5 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     protected abstract void detectionForTensorFlow();
 
-    protected abstract void detectionForTNN();
+    protected abstract void imageClassifyForTNN();
 }

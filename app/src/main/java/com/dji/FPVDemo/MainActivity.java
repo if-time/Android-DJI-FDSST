@@ -43,7 +43,7 @@ public class MainActivity extends DJIMainActivity {
     }
 
     @Override
-    public void detectionForTNN() {
+    public void imageClassifyForTNN() {
         Bitmap bitmap = tvVideoPreviewer.getBitmap();
         try {
             // 预测图像
@@ -51,7 +51,7 @@ public class MainActivity extends DJIMainActivity {
             float[] result = imageClassifyUtil.predictForTNN(bitmap);
 
             bitmap.recycle();
-            Log.i("imageClassifyUtil", "detectionForTNN: " +
+            Log.i("imageClassifyUtil", "imageClassifyForTNN: " +
                     "预测结果标签：" + (int) result[0] +
                     "名称：" + classNames.get((int) result[0]) +
                     "概率：" + result[1]);
