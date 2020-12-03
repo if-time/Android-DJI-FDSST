@@ -1,2 +1,2 @@
-include ':opcv430android'
+include ':opcv430android', ':tnnlibrary'
 include ':app'

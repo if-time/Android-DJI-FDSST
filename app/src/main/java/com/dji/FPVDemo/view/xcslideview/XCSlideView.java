@@ -21,6 +21,7 @@ import com.dji.FPVDemo.utils.DensityUtil;
 /**
  * 自定义侧滑View控件
  *
+ * https://www.cnblogs.com/JczmDeveloper/p/4821148.html
  * @author dongsiyuan
  * @date 2020/11/13 16:19
  */

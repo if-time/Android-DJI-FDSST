@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dianping.logan.Logan;
 import com.dji.FPVDemo.customview.DetectionModelView;
+import com.dji.FPVDemo.customview.LoganUploadView;
 import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
@@ -42,9 +43,12 @@ import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.MultiBoxTracker;
 import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.xcslideview.XCSlideView;
+import com.example.tnnlibrary.tnn.ImageClassifyUtil;
+import com.example.tnnlibrary.tnn.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,6 +117,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     public ClassifierFromTensorFlow classifierFromTensorFlow;
 
+    public ImageClassifyUtil imageClassifyUtil;
+    public ArrayList<String> classNames;
+    static final boolean USE_GPU = false;
     // 画框
     public MultiBoxTracker tracker;
 
@@ -157,6 +164,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     TrackingForTouchFrameView itemTrackingForTouchFrameView;
     DetectionModelView itemDetectionModelView;
+    LoganUploadView itemLoganUploadView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +192,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         slideViewRightMoreSetting.setMenuWidth(widthDisplay * 4 / 9);
         itemTrackingForTouchFrameView = menuViewRight.findViewById(R.id.itemTrackingForTouchFrameView);
         itemTrackingForTouchFrameView.initView(this, llTouchFrameViewContainer);
+        itemLoganUploadView = menuViewRight.findViewById(R.id.itemLoganUploadView);
+        itemLoganUploadView.initView(this);
         itemDetectionModelView = menuViewRight.findViewById(R.id.itemDetectionModelView);
         itemDetectionModelView.initView(this, getSupportFragmentManager());
         itemDetectionModelView.setAddOverlayViewCallback(new AddOverlayView() {
@@ -204,6 +214,25 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                             Log.e("TensorFlow", "Failed to initialize an image classifier.");
 
                         }
+                    case USE_TNN_FOR_CLASSIFY:
+                        // 加载模型和标签
+                        classNames = Utils.ReadListFromFile(getAssets(), "label_list.txt");
+                        String protoContent = getCacheDir().getAbsolutePath() + File.separator + "squeezenet_v1.1.tnnproto";
+                        Log.i("imageClassifyUtil", "protoContentPath: " + protoContent);
+                        Utils.copyFileFromAsset(DJIMainActivity.this, "squeezenet_v1.1.tnnproto", protoContent);
+                        String modelContent = getCacheDir().getAbsolutePath() + File.separator + "squeezenet_v1.1.tnnmodel";
+                        Utils.copyFileFromAsset(DJIMainActivity.this, "squeezenet_v1.1.tnnmodel", modelContent);
+
+                        imageClassifyUtil = new ImageClassifyUtil();
+
+                        int status = imageClassifyUtil.initTNN(modelContent, protoContent, USE_GPU ? 1 : 0);
+                        if (status == 0) {
+                            Toast.makeText(DJIMainActivity.this, "模型加载成功！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DJIMainActivity.this, "模型加载失败！", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+
                         break;
                     default:
                         break;
@@ -262,6 +291,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     @Override
     protected void onDestroy() {
+        imageClassifyUtil.deinitTNN();
+        imageClassifyUtil = null;
         uninitPreviewer();
         // 关闭虚拟摇杆
         if (mFlightController != null) {
@@ -460,6 +491,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
             case USE_TENSORFLOW:
                 detectionForTensorFlow();
                 break;
+            case USE_TNN_FOR_CLASSIFY:
+                imageClassifyForTNN();
             default:
                 break;
         }
@@ -796,4 +829,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     protected abstract void trackingForFDSST();
 
     protected abstract void detectionForTensorFlow();
+
+    protected abstract void imageClassifyForTNN();
 }

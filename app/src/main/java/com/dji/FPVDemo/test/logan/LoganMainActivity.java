@@ -27,6 +27,7 @@ public class LoganMainActivity extends AppCompatActivity {
     private TextView mTvInfo;
     private EditText mEditIp;
     private RealSendLogRunnable mSendLogRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +72,7 @@ public class LoganMainActivity extends AppCompatActivity {
         findViewById(R.id.send_btn_default).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Logan.w("LoganUploadView uploadLogan", 3);
                 loganSendByDefault();
             }
         });

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/height_15">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/height_15"
+        android:layout_marginTop="@dimen/height_15"
+        android:text="Logan"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginStart="@dimen/height_15"
+        android:layout_marginTop="@dimen/height_15"
+        android:background="@drawable/bg_solid_corner_blue"
+        android:text="上传日志"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSelect"
+        android:layout_marginStart="@dimen/height_15"
+        android:layout_marginTop="@dimen/height_15"
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_16sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

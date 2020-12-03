@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.jni.NativeHelper;
@@ -33,9 +34,44 @@ public class MainActivity extends DJIMainActivity {
     private float dxCenterScreenObject;
     private float dyCenterScreenObject;
 
+    double total_fps = 0;
+    int fps_count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void imageClassifyForTNN() {
+        Bitmap bitmap = tvVideoPreviewer.getBitmap();
+        try {
+            // 预测图像
+            long start = System.currentTimeMillis();
+            float[] result = imageClassifyUtil.predictForTNN(bitmap);
+
+            bitmap.recycle();
+            Log.i("imageClassifyUtil", "imageClassifyForTNN: " +
+                    "预测结果标签：" + (int) result[0] +
+                    "名称：" + classNames.get((int) result[0]) +
+                    "概率：" + result[1]);
+
+            StringBuffer sb = new StringBuffer();
+            LogUtil.addLineToSB(sb, "预测结果标签: ", (int) result[0]);
+            LogUtil.addLineToSB(sb, "名称：", classNames.get((int) result[0]));
+            LogUtil.addLineToSB(sb, "概率：", result[1]);
+            long end = System.currentTimeMillis();
+            float fps = (float) (1000.0 / (end - start));
+            total_fps = (total_fps == 0) ? fps : (total_fps + fps);
+            fps_count++;
+
+            LogUtil.addLineToSB(sb, "AVG_FPS: " , ((float) total_fps / fps_count));
+            setResultToText(sb.toString());
+
+            setFPS(1000 / (System.currentTimeMillis() - start));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
