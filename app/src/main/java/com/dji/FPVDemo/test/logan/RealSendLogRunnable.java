@@ -54,9 +54,7 @@ public class RealSendLogRunnable extends SendLogRunnable {
 
     @Override
     public void sendLog(File logFile) {
-        Log.i("dongloagan", "HttpsURLConnection: " + logFile.toString());
         boolean success = doSendFileByAction(logFile);
-        Log.d("上传日志测试", "日志上传测试结果：" + success);
         // Must Call finish after send log
         finish();
         if (logFile.getName().contains(".copy")) {
@@ -100,15 +98,12 @@ public class RealSendLogRunnable extends SendLogRunnable {
         ByteArrayOutputStream back;
         byte[] Buffer = new byte[2048];
         try {
-            Log.i("dongloagan", "try: " + url);
             URL u = new URL(url);
             c = (HttpURLConnection) u.openConnection();
             if (c instanceof HttpsURLConnection) {
-                Log.i("dongloagan", "HttpsURLConnection: ");
                 ((HttpsURLConnection) c).setHostnameVerifier(new HostnameVerifier() {
                     @Override
                     public boolean verify(String hostname, SSLSession session) {
-                        Log.i("dongloagan", "verify: hostname： " + hostname);
                         return true;
                     }
                 });
@@ -136,19 +131,14 @@ public class RealSendLogRunnable extends SendLogRunnable {
                     back.write(Buffer, 0, i);
                 }
                 data = back.toByteArray();
-                Log.i("dongloagan", "res == 200: " + data);
             }
         } catch (ProtocolException e) {
-            Log.i("dongloagan", "ProtocolException: ");
             e.printStackTrace();
         } catch (MalformedURLException e) {
-            Log.i("dongloagan", "MalformedURLException: ");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.i("dongloagan", "IOException: " + e.toString());
             e.printStackTrace();
         } finally {
-            Log.i("dongloagan", "finally: ");
             if (outputStream != null) {
                 try {
                     outputStream.close();
@@ -184,10 +174,8 @@ public class RealSendLogRunnable extends SendLogRunnable {
         boolean isSuccess = false;
         if (backData != null) {
             String data = new String(backData);
-            Log.i("dongloagan", "handleSendLogBackData: " + data);
             if (!TextUtils.isEmpty(data)) {
                 JSONObject jsonObj = new JSONObject(data);
-                Log.i("dongloagan", "handleSendLogBackData: " + jsonObj);
                 if (jsonObj.optBoolean("success", false)) {
                     isSuccess = true;
                 }

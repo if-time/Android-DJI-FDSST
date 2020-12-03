@@ -72,6 +72,7 @@ public class LoganMainActivity extends AppCompatActivity {
         findViewById(R.id.send_btn_default).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Logan.w("LoganUploadView uploadLogan", 3);
                 loganSendByDefault();
             }
         });

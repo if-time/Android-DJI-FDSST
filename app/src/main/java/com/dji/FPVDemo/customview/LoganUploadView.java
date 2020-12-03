@@ -62,7 +62,7 @@ public class LoganUploadView extends CommonView {
 
     @OnClick(R.id.btnSelect)
     public void uploadLogan() {
-        loganSend();
+        Logan.w("LoganUploadView uploadLogan", 3);
         loganFilesInfo();
     }
 
