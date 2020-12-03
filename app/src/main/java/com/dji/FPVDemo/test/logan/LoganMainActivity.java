@@ -27,6 +27,7 @@ public class LoganMainActivity extends AppCompatActivity {
     private TextView mTvInfo;
     private EditText mEditIp;
     private RealSendLogRunnable mSendLogRunnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

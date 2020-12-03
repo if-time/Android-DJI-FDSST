@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dianping.logan.Logan;
 import com.dji.FPVDemo.customview.DetectionModelView;
+import com.dji.FPVDemo.customview.LoganUploadView;
 import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.detection.tflite.TFLiteObjectDetectionAPIModel;
@@ -163,6 +164,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     TrackingForTouchFrameView itemTrackingForTouchFrameView;
     DetectionModelView itemDetectionModelView;
+    LoganUploadView itemLoganUploadView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +192,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
         slideViewRightMoreSetting.setMenuWidth(widthDisplay * 4 / 9);
         itemTrackingForTouchFrameView = menuViewRight.findViewById(R.id.itemTrackingForTouchFrameView);
         itemTrackingForTouchFrameView.initView(this, llTouchFrameViewContainer);
+        itemLoganUploadView = menuViewRight.findViewById(R.id.itemLoganUploadView);
+        itemLoganUploadView.initView(this);
         itemDetectionModelView = menuViewRight.findViewById(R.id.itemDetectionModelView);
         itemDetectionModelView.initView(this, getSupportFragmentManager());
         itemDetectionModelView.setAddOverlayViewCallback(new AddOverlayView() {
