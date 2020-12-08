@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/height_20"
             android:layout_marginTop="@dimen/height_15"
-            android:src="@drawable/pic" />
+            android:src="@drawable/ic_pic" />
 
     </LinearLayout>
 

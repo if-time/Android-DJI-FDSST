@@ -32,9 +32,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.dji.FPVDemo.R;
-import com.dji.FPVDemo.test.album.PhotooActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +175,7 @@ public class RecyclerViewPictureActivity extends AppCompatActivity {
                     .asBitmap()
                     .priority(Priority.NORMAL)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.ic_placeholder)
                     .centerCrop().into(new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
