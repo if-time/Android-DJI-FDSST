@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.dji.FPVDemo.R;
+import com.dji.FPVDemo.test.album.activity.RecyclerViewPictureActivity;
 import com.dji.FPVDemo.test.bugly.BuglyMainActivity;
 import com.dji.FPVDemo.test.drawerlayout.CustomSideSlipMenuActivity;
 import com.dji.FPVDemo.test.drawerlayout.DrawerLayoutActivity;
 import com.dji.FPVDemo.test.drawerlayout.DrawerlayoutNaviMainActivity;
 import com.dji.FPVDemo.test.imageopencv.PictureConversionTestActivity;
 import com.dji.FPVDemo.test.logan.LoganMainActivity;
+import com.dji.FPVDemo.utils.dialogs.DialogFragmentHelper;
+import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +74,20 @@ public class RecyclerViewMainActivity extends AppCompatActivity {
                         Intent drawerlayoutIntent = new Intent(RecyclerViewMainActivity.this, DrawerLayoutActivity.class);
                         startActivity(drawerlayoutIntent);
                         break;
+                    case 6: {
+                        DialogFragmentHelper.showIntervalInsertDialog(RecyclerViewMainActivity.this, getSupportFragmentManager(), "Test",
+                                new IDialogResultListener<String[]>() {
+                                    @Override
+                                    public void onDataResult(String[] result) {
+
+                                    }
+                                }, true);
+                    }
+                    break;
+                    case 7:
+                        Intent albumlayoutIntent = new Intent(RecyclerViewMainActivity.this, RecyclerViewPictureActivity.class);
+                        startActivity(albumlayoutIntent);
+                        break;
                     default:
                         break;
                 }
@@ -98,5 +115,10 @@ public class RecyclerViewMainActivity extends AppCompatActivity {
         String drawerlayoutString = "DrawerlayoutActivity";
         buttonList.add(drawerlayoutString);
 
+        String dialogUtilString = "DialogUtil";
+        buttonList.add(dialogUtilString);
+
+        String albumString = "albumString";
+        buttonList.add(albumString);
     }
 }

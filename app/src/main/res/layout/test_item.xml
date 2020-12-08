@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.dji.FPVDemo.test.album.activity.SquareRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rl_add"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_content"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/bg_pic_frame"
+            android:scaleType="fitXY" />
+
+    </com.dji.FPVDemo.test.album.activity.SquareRelativeLayout>
+</LinearLayout>

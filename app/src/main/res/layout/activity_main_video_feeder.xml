@@ -95,6 +95,14 @@
             android:src="@mipmap/ic_sliding_drawer"
             android:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/media_browse_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/height_20"
+            android:layout_marginTop="@dimen/height_15"
+            android:src="@drawable/pic" />
+
     </LinearLayout>
 
     <SlidingDrawer

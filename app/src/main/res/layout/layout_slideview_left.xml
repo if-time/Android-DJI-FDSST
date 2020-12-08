@@ -18,19 +18,9 @@
             android:layout_marginTop="@dimen/height_20"
             android:orientation="vertical">
 
-            <com.dji.FPVDemo.customview.TrackingForTouchFrameView
-                android:id="@+id/itemTrackingForTouchFrameView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.dji.FPVDemo.customview.DetectionModelView
-                android:id="@+id/itemDetectionModelView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.dji.FPVDemo.customview.LoganUploadView
-                android:id="@+id/itemLoganUploadView"
-                android:layout_width="wrap_content"
+            <com.dji.FPVDemo.customview.CameraModeView
+                android:id="@+id/itemCameraModeViewLeft"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>

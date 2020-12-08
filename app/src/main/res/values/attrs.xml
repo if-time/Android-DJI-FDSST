@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--  图片管理器 -->
+    <declare-styleable name="picture_display_style">
+        <attr name="hintimage" format="reference" />
+        <attr name="count" format="integer" />
+        <attr name="showtype" format="enum">
+            <enum name="only_show" value="0" />
+            <enum name="add" value="1" />
+            <enum name="all_show" value="2" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>

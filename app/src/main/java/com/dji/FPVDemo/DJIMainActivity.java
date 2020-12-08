@@ -1,5 +1,6 @@
 package com.dji.FPVDemo;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -26,6 +27,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dianping.logan.Logan;
+import com.dji.FPVDemo.customview.CameraModeView;
 import com.dji.FPVDemo.customview.DetectionModelView;
 import com.dji.FPVDemo.customview.LoganUploadView;
 import com.dji.FPVDemo.customview.TrackingForTouchFrameView;
@@ -124,9 +126,13 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     public MultiBoxTracker tracker;
 
     private XCSlideView slideViewRightMoreSetting;
+    private XCSlideView slideViewLeft;
 
     OverlayView ovTrackingOverlay;
     View overlayView;
+
+    @BindView(R.id.media_browse_iv)
+    ImageView mediaBrowseIv;
 
     @BindView(R.id.ivMoreSetting)
     ImageView ivMoreSetting;
@@ -165,6 +171,7 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     TrackingForTouchFrameView itemTrackingForTouchFrameView;
     DetectionModelView itemDetectionModelView;
     LoganUploadView itemLoganUploadView;
+    CameraModeView itemCameraModeViewLeft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +193,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     }
 
     private void initSlideView() {
+        View menuViewLeft = LayoutInflater.from(this).inflate(R.layout.layout_slideview_left, null);
+        slideViewLeft = XCSlideView.create(this, XCSlideView.Positon.LEFT);
+        slideViewLeft.setMenuView(DJIMainActivity.this, menuViewLeft);
+        slideViewLeft.setMenuWidth(widthDisplay * 4 / 9);
+        itemCameraModeViewLeft = menuViewLeft.findViewById(R.id.itemCameraModeViewLeft);
+
         View menuViewRight = LayoutInflater.from(this).inflate(R.layout.layout_slideview, null);
         slideViewRightMoreSetting = XCSlideView.create(this, XCSlideView.Positon.RIGHT);
         slideViewRightMoreSetting.setMenuView(DJIMainActivity.this, menuViewRight);
@@ -661,6 +674,12 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 }
             }
         }, true);
+    }
+
+    @OnClick(R.id.media_browse_iv)
+    public void openAlbum() {
+//        Intent intent = new Intent(this, MediaBrowserActivity.class);
+//        startActivity(intent);
     }
 
     @OnClick(R.id.ivMoreSetting)

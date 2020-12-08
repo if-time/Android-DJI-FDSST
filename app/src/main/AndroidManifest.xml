@@ -37,8 +37,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity"></activity>
-        <activity android:name=".test.drawerlayout.DrawerLayoutActivity"></activity>
+        <activity android:name=".test.album.activity.PreviewPhotoActivity"></activity>
+        <activity android:name=".test.album.activity.RecyclerViewPictureActivity" />
+        <activity android:name=".test.album.PhotoPreActivity" />
+        <activity android:name=".test.album.PhotooActivity" />
+        <activity android:name=".test.drawclickevents.DrawSimpleCircleMainActivity" />
+        <activity android:name=".test.drawerlayout.DrawerLayoutActivity" />
         <activity
             android:name=".test.drawerlayout.DrawerlayoutNaviMainActivity"
             android:label="@string/title_activity_drawerlayout_navi_main"

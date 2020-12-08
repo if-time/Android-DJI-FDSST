@@ -5,26 +5,27 @@
     android:layout_marginStart="@dimen/height_15"
     android:layout_marginTop="@dimen/height_15">
 
-    <TextView
-        android:id="@+id/tvTitle"
+    <Button
+        android:id="@+id/btnCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/height_15"
         android:layout_marginTop="@dimen/height_15"
-        android:text="选择识别算法"
+        android:background="@drawable/bg_solid_corner_blue"
+        android:text="Thermal"
         android:textColor="@color/white"
         android:textSize="@dimen/font_16sp"
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnSelect"
+        android:id="@+id/btnVisual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTitle"
+        android:layout_toRightOf="@+id/btnCheck"
         android:layout_marginStart="@dimen/height_15"
         android:layout_marginTop="@dimen/height_15"
         android:background="@drawable/bg_solid_corner_blue"
-        android:text="识别算法"
+        android:text="Visual"
         android:textColor="@color/white"
         android:textSize="@dimen/font_16sp"
         android:textStyle="bold" />

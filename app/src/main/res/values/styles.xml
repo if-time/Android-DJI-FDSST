@@ -78,5 +78,15 @@
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
 
+    <style name="OverFlowMenuTheme" parent="Theme.AppCompat.NoActionBar">
 
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <style name="CheckBox" parent="@android:style/Widget.Material.CompoundButton.CheckBox">
+        <item name="android:colorControlActivated">#303F9F</item>
+        <item name="android:colorControlNormal">@color/colorPrimary</item>
+    </style>
 </resources>
