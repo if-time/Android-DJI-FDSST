@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.dji.FPVDemo.detection.ClassifierFromTensorFlow;
 import com.dji.FPVDemo.jni.NativeHelper;
+import com.dji.FPVDemo.tnn.ObjectInfo;
 import com.dji.FPVDemo.tracking.TrackingResultFormJNI;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.ImageUtils;
@@ -43,6 +44,24 @@ public class MainActivity extends DJIMainActivity {
     }
 
     @Override
+    public void objectDetectForTNN() {
+        long start = System.currentTimeMillis();
+        Bitmap bitmap = tvVideoPreviewer.getBitmap();
+
+        ObjectInfo[] objectInfoList;
+
+        objectInfoList = mObjectDetector.detectFromImage(bitmap, bitmap.getWidth(), bitmap.getHeight());
+        setFPS(1000 / (System.currentTimeMillis() - start));
+        CommonUtils.showToast(this, (System.currentTimeMillis() - start) + "");
+        if (objectInfoList != null) {
+            for (int i = 0; i < objectInfoList.length; i++) {
+//            rects.add(new Rect((int)objectInfoList[i].x1, (int)objectInfoList[i].y1, (int)objectInfoList[i].x2, (int)objectInfoList[i].y2));
+//            labels.add(String.format("%s : %f", label_list[objectInfoList[i].class_id], objectInfoList[i].score));
+            }
+        }
+    }
+
+    @Override
     public void imageClassifyForTNN() {
         Bitmap bitmap = tvVideoPreviewer.getBitmap();
         try {
@@ -65,7 +84,7 @@ public class MainActivity extends DJIMainActivity {
             total_fps = (total_fps == 0) ? fps : (total_fps + fps);
             fps_count++;
 
-            LogUtil.addLineToSB(sb, "AVG_FPS: " , ((float) total_fps / fps_count));
+            LogUtil.addLineToSB(sb, "AVG_FPS: ", ((float) total_fps / fps_count));
             setResultToText(sb.toString());
 
             setFPS(1000 / (System.currentTimeMillis() - start));

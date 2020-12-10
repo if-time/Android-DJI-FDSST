@@ -14,8 +14,8 @@ set(TNN_ARM_ENABLE ON CACHE BOOL "" FORCE)
 
 #file(GLOB_RECURSE WRAPPER_SRCS ${CMAKE_SOURCE_DIR}/../cpp/*.cc)
 #add_library(tnn_wrapper SHARED imageclassify_jni.cpp ${WRAPPER_SRCS})
-file(GLOB_RECURSE WRAPPER_SRCS ${CMAKE_SOURCE_DIR}/../cpp/*.cpp)
-add_library(tnn_wrapper SHARED ${WRAPPER_SRCS})
+#file(GLOB_RECURSE WRAPPER_SRCS ${CMAKE_SOURCE_DIR}/../cpp/*.cpp)
+add_library(tnn_wrapper SHARED objectdetector_jni.cpp object_detector_yolo.cc tnn_sdk_sample.cc imageclassify_jni.cpp)
 
 add_library(tnn SHARED IMPORTED)
 set_target_properties(tnn PROPERTIES IMPORTED_LOCATION ${lib_DIR}/${ANDROID_ABI}/libTNN.so)

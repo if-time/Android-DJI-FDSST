@@ -65,7 +65,7 @@ public class DetectionModelView extends CommonView {
     @OnClick(R.id.btnSelect)
     public void selectDetectionModel() {
         String titleList = "选择哪种识别算法？";
-        final String[] languanges = new String[]{"TensorFlow", "USE_TNN_FOR_CLASSIFY", "TNN", "NCNN"};
+        final String[] languanges = new String[]{"USE_TENSORFLOW", "USE_TNN_FOR_CLASSIFY", "USE_TNN_FOR_DETECTION"};
         DialogFragmentHelper.showListDialog(context, fragmentManager, titleList, languanges, new IDialogResultListener<Integer>() {
             @Override
             public void onDataResult(Integer result) {
@@ -78,6 +78,10 @@ public class DetectionModelView extends CommonView {
                         break;
                     case 1:
                         TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_TNN_FOR_CLASSIFY;
+                        initRecognitionAlgorithm(TrackerTypeEnum.trackerType);
+                        break;
+                    case 2:
+                        TrackerTypeEnum.trackerType = TrackerTypeEnum.TrackerType.USE_TNN_FOR_DETECTION;
                         initRecognitionAlgorithm(TrackerTypeEnum.trackerType);
                         break;
                     default:

@@ -35,6 +35,10 @@ import com.dji.FPVDemo.enums.TrackerTypeEnum;
 import com.dji.FPVDemo.interf.AddOverlayView;
 import com.dji.FPVDemo.interf.ConfirmLocationForTensorFlow;
 import com.dji.FPVDemo.interf.SetRecognitionAlgorithm;
+import com.dji.FPVDemo.tnn.ImageClassifyUtil;
+import com.dji.FPVDemo.tnn.ObjectDetectUtil;
+import com.dji.FPVDemo.tnn.ObjectDetector;
+import com.dji.FPVDemo.tnn.Utils;
 import com.dji.FPVDemo.utils.CommonUtils;
 import com.dji.FPVDemo.utils.DensityUtil;
 import com.dji.FPVDemo.utils.WriteFileUtil;
@@ -43,8 +47,6 @@ import com.dji.FPVDemo.utils.dialogs.IDialogResultListener;
 import com.dji.FPVDemo.view.MultiBoxTracker;
 import com.dji.FPVDemo.view.OverlayView;
 import com.dji.FPVDemo.view.xcslideview.XCSlideView;
-import com.example.tnnlibrary.tnn.ImageClassifyUtil;
-import com.example.tnnlibrary.tnn.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +92,10 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
     public static final int TF_OD_API_INPUT_SIZE = 300;
 
+    // TNN detection
+    private static final int NET_H_INPUT = 448;
+    private static final int NET_W_INPUT = 640;
+
     public int widthDisplay;
     public int heightDisplay;
 
@@ -97,6 +103,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     private boolean runDetectionForTensorFlow = false;
     // 虚拟摇杆默认是关闭的
     private boolean isSimulator = false;
+
+    // TNN针对华为NPU的推理
+    public boolean NpuEnable = false;
 
     private FlightController mFlightController;
 
@@ -117,6 +126,8 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
 
     public ClassifierFromTensorFlow classifierFromTensorFlow;
 
+    public ObjectDetector mObjectDetector = new ObjectDetector();
+    public ObjectDetectUtil objectDetectUtil;
     public ImageClassifyUtil imageClassifyUtil;
     public ArrayList<String> classNames;
     static final boolean USE_GPU = false;
@@ -233,6 +244,27 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                             finish();
                         }
 
+                        break;
+                    case USE_TNN_FOR_DETECTION:
+                        objectDetectUtil = new ObjectDetectUtil();
+                        String modelPath = objectDetectUtil.initModel(DJIMainActivity.this);
+                        Log.i("modelPath", "initRecognitionAlgorithm: " + modelPath);
+                        Log.i("modelPath", "initRecognitionAlgorithm: 11" + DJIMainActivity.this.getFilesDir().getAbsolutePath());
+
+//                        NpuEnable = mObjectDetector.checkNpu(modelPath);
+
+                        int device = 1;
+//                        if (mUseGPU) {
+//                            device = 1;
+//                        }
+                        int ret = mObjectDetector.init(modelPath, NET_W_INPUT, NET_H_INPUT, 0.7f, 0.3f, -1, device);
+
+                        if (ret == 0) {
+                            Toast.makeText(DJIMainActivity.this, "模型加载成功！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(DJIMainActivity.this, "模型加载失败！", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Face detector init failed " + ret);
+                        }
                         break;
                     default:
                         break;
@@ -493,6 +525,9 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 break;
             case USE_TNN_FOR_CLASSIFY:
                 imageClassifyForTNN();
+                break;
+            case USE_TNN_FOR_DETECTION:
+                objectDetectForTNN();
             default:
                 break;
         }
@@ -690,6 +725,10 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
                 removeOverlayView();
             }
 
+            if (mObjectDetector != null) {
+                mObjectDetector.deinit();
+            }
+
         } else {
 //            startBackgroundThreadForTensorFlow();
             startBackgroundThreadForTracking();
@@ -831,4 +870,6 @@ public abstract class DJIMainActivity extends AppCompatActivity implements Textu
     protected abstract void detectionForTensorFlow();
 
     protected abstract void imageClassifyForTNN();
+
+    protected abstract void objectDetectForTNN();
 }

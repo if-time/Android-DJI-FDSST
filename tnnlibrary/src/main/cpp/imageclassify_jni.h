@@ -9,7 +9,7 @@
 #include <string>
 #include <fstream>
 
-#define TNN_CLASSIFY(sig) Java_com_example_tnnlibrary_tnn_ImageClassifyUtil_##sig
+#define TNN_CLASSIFY(sig) Java_com_dji_FPVDemo_tnn_ImageClassifyUtil_##sig
 
 #ifdef __cplusplus
 extern "C" {
